@@ -1,3 +1,6 @@
+# See the HTML list of reports
+https://htmlpreview.github.io/?https://github.com/helms-charity/reporting-git/blob/main/reports/index.html
+
 # GitHub Repository User Activity Reporter
 
 Generate weekly or monthly reports of GitHub user activity within specific repositories, including pull requests, code reviews, issues, and more.
