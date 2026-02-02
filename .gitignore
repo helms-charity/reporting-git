@@ -23,11 +23,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# Reports (generated files)
-reports/
-*.html
-*.json
-
 # IDE
 .vscode/
 .idea/
