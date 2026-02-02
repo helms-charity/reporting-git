@@ -1,4 +1,6 @@
 # See the HTML list of reports
+https://raw.githack.com/helms-charity/reporting-git/main/reports/index.html
+or
 https://htmlpreview.github.io/?https://github.com/helms-charity/reporting-git/blob/main/reports/index.html
 
 # GitHub Repository User Activity Reporter
