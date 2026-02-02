@@ -35,6 +35,7 @@ python github_repo_user_report.py aemsites idfc YOUR_USERNAME \
     --days 7 \
     --format html \
     --output reports/team/YOUR_USERNAME-idfc-2026-02-02.html
+    --token $GITHUB_TOKEN
 
 # View it
 open reports/team/YOUR_USERNAME-idfc-2026-02-02.html

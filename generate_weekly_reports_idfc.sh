@@ -38,45 +38,36 @@ if [ -z "$GITHUB_TOKEN" ]; then
     echo ""
 fi
 
-echo "🚀 Starting parallel report generation for ${#USERS[@]} users..."
+echo "🚀 Starting report generation for ${#USERS[@]} users..."
 echo "Repository: $REPO_OWNER/$REPO_NAME"
 echo "Date: $DATE"
 echo "---"
 
-# Array to store background job PIDs
-declare -a PIDS
-
-# Start all reports in parallel
+# Start all reports sequentially (to avoid rate limiting)
 for user in "${USERS[@]}"; do
     OUTPUT_FILE="${OUTPUT_DIR}/${user}-${REPO_NAME}-${DATE}.html"
     
     echo "Starting report for @${user}..."
     
-    # Run in background and capture PID
-    # Pass token explicitly if set (background jobs inherit env vars, but being explicit is safer)
+    # Run sequentially (no & at end)
     if [ -n "$GITHUB_TOKEN" ]; then
         python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" \
             --days 7 \
             --format html \
             --token "$GITHUB_TOKEN" \
-            --output "$OUTPUT_FILE" &
+            --output "$OUTPUT_FILE"
     else
         python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" \
             --days 7 \
             --format html \
-            --token \
-            --output "$OUTPUT_FILE" &
+            --output "$OUTPUT_FILE"
     fi
     
-    PIDS+=($!)
+    echo "✓ Completed: @${user}"
+    
+    # Small delay between users to be respectful to GitHub API
+    sleep 2
 done
-
-echo "---"
-echo "⏳ All ${#USERS[@]} reports started in parallel. Waiting for completion..."
-echo ""
-
-# Wait for all background jobs to complete
-wait
 
 echo "✅ All reports completed!"
 
