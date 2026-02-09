@@ -15,11 +15,11 @@ import argparse
 
 
 class GitHubRepoUserAnalyzer:
-    def __init__(self, owner: str, repo: str, username: str, github_token: Optional[str] = None):
+    def __init__(self, owner: str, repo: str, username: str, github_token: Optional[str] = None, base_url: Optional[str] = None):
         self.owner = owner
         self.repo = repo
         self.username = username
-        self.base_url = "https://api.github.com"
+        self.base_url = (base_url or "").rstrip("/") or "https://api.github.com"
         self.headers = {
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28"
@@ -535,7 +535,7 @@ class GitHubRepoUserAnalyzer:
             for review in self.stats["pull_requests_reviewed"]:
                 report.append(f"  • {review['state'].upper()} on #{review['pr_number']}: {review['pr_title']}")
                 report.append(f"    URL: {review['pr_url']}")
-                report.append(f"    Submitted: {review['submitted_at']}")
+                report.append(f"    Submitted: {review.get('submitted_at') or 'Unknown'}")
                 report.append("")
         
         # Issues Opened
@@ -1161,7 +1161,11 @@ class GitHubRepoUserAnalyzer:
                     'COMMENTED': 'badge-commented'
                 }.get(review_state, 'badge-commented')
                 
-                review_date = datetime.strptime(review['submitted_at'], "%Y-%m-%dT%H:%M:%SZ").strftime('%B %d, %Y')
+                submitted_at = review.get('submitted_at')
+                if submitted_at:
+                    review_date = datetime.strptime(submitted_at, "%Y-%m-%dT%H:%M:%SZ").strftime('%B %d, %Y')
+                else:
+                    review_date = "Unknown"
                 
                 html += f"""
             <div class="pr-card">
@@ -1315,17 +1319,25 @@ Examples:
     parser.add_argument("--format", choices=["text", "html", "json"], default="text",
                        help="Output format (default: text)")
     parser.add_argument("--output", "-o", help="Output file (default: stdout)")
-    parser.add_argument("--token", help="GitHub personal access token (or set GITHUB_TOKEN env var)")
+    parser.add_argument("--token", help="GitHub personal access token (or set GITHUB_TOKEN / GITHUB_ENTERPRISE_TOKEN env var)")
+    parser.add_argument("--api-url", help="GitHub API base URL for Enterprise (e.g. https://github.corp.example.com/api/v3). Or set GITHUB_API_URL.")
     
     args = parser.parse_args()
     
-    # Get token from args or environment
     import os
-    token = args.token or os.environ.get("GITHUB_TOKEN")
+    # API URL: --api-url wins, then env GITHUB_API_URL, else default (github.com)
+    api_url = args.api_url or os.environ.get("GITHUB_API_URL")
+    # Token: --token wins; if using Enterprise API URL, try GITHUB_ENTERPRISE_TOKEN then GITHUB_TOKEN; else GITHUB_TOKEN only
+    token = args.token
+    if not token:
+        if api_url:
+            token = os.environ.get("GITHUB_ENTERPRISE_TOKEN") or os.environ.get("GITHUB_TOKEN")
+        else:
+            token = os.environ.get("GITHUB_TOKEN")
     
     if not token:
         print("⚠️  Warning: No GitHub token provided. Rate limits will be lower (60 requests/hour).")
-        print("   Set GITHUB_TOKEN environment variable or use --token for higher limits.\n")
+        print("   Set GITHUB_TOKEN (or GITHUB_ENTERPRISE_TOKEN for --api-url) or use --token.\n")
     
     # Parse startdate if provided
     end_date = None
@@ -1338,7 +1350,7 @@ Examples:
             return
     
     # Create analyzer
-    analyzer = GitHubRepoUserAnalyzer(args.owner, args.repo, args.username, token)
+    analyzer = GitHubRepoUserAnalyzer(args.owner, args.repo, args.username, token, base_url=api_url)
     
     # Analyze activity
     analyzer.analyze_activity(args.days, end_date)

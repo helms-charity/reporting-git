@@ -356,6 +356,21 @@ To access private repositories, your GitHub token must have the `repo` scope:
 3. Select **`repo`** (Full control of private repositories)
 4. Use the token as described in the Quick Start section
 
+## GitHub Enterprise (two tokens)
+
+To use both **github.com** and **GitHub Enterprise** in the same setup:
+
+1. **github.com**: Keep `GITHUB_TOKEN` for repos on github.com (e.g. idfc scripts).
+2. **Enterprise**: Set your Enterprise API base URL and a separate token:
+   ```bash
+   export GITHUB_API_URL="https://your-enterprise-host/api/v3"
+   export GITHUB_ENTERPRISE_TOKEN="your_enterprise_personal_access_token"
+   ```
+3. Scripts that target Enterprise repos (e.g. `generate_weekly_reports_excat-plugin.sh`) use `GITHUB_API_URL` and `GITHUB_ENTERPRISE_TOKEN` when set. You can also pass them explicitly:
+   ```bash
+   python github_repo_user_report.py OWNER REPO USER --api-url "$GITHUB_API_URL" --token "$GITHUB_ENTERPRISE_TOKEN"
+   ```
+
 ## Troubleshooting
 
 ### "⚠️ Warning: No GitHub token provided"

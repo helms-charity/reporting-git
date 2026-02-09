@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @zhummerz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        .commit-list {
+            background: oklch(from #f8f9fa l c h);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .commit-item {
+            padding: 10px;
+            border-left: 3px solid oklch(from #0366d6 l c h);
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .commit-sha {
+            font-family: 'Monaco', monospace;
+            color: oklch(from #0366d6 l c h);
+            font-weight: 600;
+        }
+        
+        .commit-message {
+            margin: 5px 0;
+            color: oklch(from #1f2937 l c h);
+        }
+        
+        .commit-date {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">aemsites/idfc</div>
+            <div class="username">@zhummerz</div>
+            <div class="meta">
+                📅 Period: February 02, 2026 to February 09, 2026 (7 days) | 
+                🕐 Generated: February 09, 2026 at 08:40:01
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">4</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+11542</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-2</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">💾 Commits in PRs</div>
+                <div class="metric-value">8</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">3</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">1</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">0</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">0</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">0</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">1</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">6</div>
+                <div class="size-description">5 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">4</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">2</div>
+                <div class="size-description">2 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🔀</span>
+                Pull Requests Opened (5)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#561</span>
+                    <a href="https://github.com/aemsites/idfc/pull/561" class="pr-link" target="_blank">PLEASE REMOVE THIS PR</a>
+                    <span class="badge badge-closed">❌ Closed</span>
+                    <span class="badge badge-xs badge-size">XS</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 06, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+0</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 0 total changes</div>
+                    <div class="pr-stat">📄 0 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#560</span>
+                    <a href="https://github.com/aemsites/idfc/pull/560" class="pr-link" target="_blank">537 tertiary button</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 06, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+23</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 23 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#553</span>
+                    <a href="https://github.com/aemsites/idfc/pull/553" class="pr-link" target="_blank">Update base path for library configuration in sidekick</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xs badge-size">XS</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 05, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+1</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-1</span>
+                    </div>
+                    <div class="pr-stat">📊 2 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#550</span>
+                    <a href="https://github.com/aemsites/idfc/pull/550" class="pr-link" target="_blank">Add sidekick library functionality and utility scripts</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 05, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+11518</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 11518 total changes</div>
+                    <div class="pr-stat">📄 3 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#540</span>
+                    <a href="https://github.com/aemsites/idfc/pull/540" class="pr-link" target="_blank">Remove line-height property from mayura-card-modal section in modal.css</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xs badge-size">XS</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 04, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+0</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-1</span>
+                    </div>
+                    <div class="pr-stat">📊 1 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by zhummerz (4)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#533</span>
+                    <a href="https://github.com/aemsites/idfc/issues/533" class="pr-link" target="_blank">Anchor nav missing arrow</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 06, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#520</span>
+                    <a href="https://github.com/aemsites/idfc/issues/520" class="pr-link" target="_blank">Update library pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 06, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#551</span>
+                    <a href="https://github.com/aemsites/idfc/issues/551" class="pr-link" target="_blank">Update blocks.json path in library.html</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 05, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#508</span>
+                    <a href="https://github.com/aemsites/idfc/issues/508" class="pr-link" target="_blank">unpublish all drafts/library/junk pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 02, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>👀</span>
+                Pull Requests Reviewed (6 reviews on 5 PRs)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all reviews. You may have reviewed some PRs multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#554</span>
+                    <a href="https://github.com/aemsites/idfc/pull/554" class="pr-link" target="_blank">Section Title fixes</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 05, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#549</span>
+                    <a href="https://github.com/aemsites/idfc/pull/549" class="pr-link" target="_blank">Section Title UE correction</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 05, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#541</span>
+                    <a href="https://github.com/aemsites/idfc/pull/541" class="pr-link" target="_blank">Center Span Icons</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 04, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#528</span>
+                    <a href="https://github.com/aemsites/idfc/pull/528" class="pr-link" target="_blank">font color and size fixes</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 03, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#529</span>
+                    <a href="https://github.com/aemsites/idfc/pull/529" class="pr-link" target="_blank">524 pay button</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 03, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#529</span>
+                    <a href="https://github.com/aemsites/idfc/pull/529" class="pr-link" target="_blank">524 pay button</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 03, 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💬</span>
+                Issue Comments (2 comments on 2 issues)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all comments. You may have commented on some issues multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#533</span>
+                    <a href="https://github.com/aemsites/idfc/issues/533" class="pr-link" target="_blank">Anchor nav missing arrow</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 06, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Added --> at the end of "Know more" for the arrow affect to work. Published page, looks good. 
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#508</span>
+                    <a href="https://github.com/aemsites/idfc/issues/508" class="pr-link" target="_blank">unpublish all drafts/library/junk pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 02, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Unpublished all pages that were on .live. All 404s now. Pages still active on .page. 
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💾</span>
+                Direct Commits (6)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Note: These are direct commits to the repository. Commits within PRs are shown in the PR cards above.</em>
+            </p>
+            <div class="commit-list">
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemsites/idfc/commit/3d40fd8a0c1815e8911e40d7f62dbe2278fb1fa8" class="commit-sha" target="_blank">3d40fd8</a>
+                        <span class="commit-message">Button decoration logic in `aem.js` to add new tertiary button styles, streamlining the function for better readability and maintainability.</span>
+                    </div>
+                    <div class="commit-date">Feb 06, 2026 16:18</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemsites/idfc/commit/e37b8ffbf1b6ab67aecadca0b28aa09cb95432cb" class="commit-sha" target="_blank">e37b8ff</a>
+                        <span class="commit-message">Enhance button decoration logic in `aem.js` to support tertiary button styles based on additional parent element conditions.</span>
+                    </div>
+                    <div class="commit-date">Feb 06, 2026 16:14</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemsites/idfc/commit/3446dc518913a6da63b53819f8f05b789ea92e62" class="commit-sha" target="_blank">3446dc5</a>
+                        <span class="commit-message">Update base path for library configuration in sidekick</span>
+                    </div>
+                    <div class="commit-date">Feb 05, 2026 20:13</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemsites/idfc/commit/390b19e6f2bdade6fdb5159ea9504c6393d42a15" class="commit-sha" target="_blank">390b19e</a>
+                        <span class="commit-message">Update icon path in sidekick library configuration</span>
+                    </div>
+                    <div class="commit-date">Feb 05, 2026 18:41</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemsites/idfc/commit/2503dfbcdae4bfd99edcedede8b7da7303b8dc46" class="commit-sha" target="_blank">2503dfb</a>
+                        <span class="commit-message">Add sidekick library functionality and utility scripts</span>
+                    </div>
+                    <div class="commit-date">Feb 05, 2026 18:38</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemsites/idfc/commit/6067e4472dc0a267019f922fe0076e460597f463" class="commit-sha" target="_blank">6067e44</a>
+                        <span class="commit-message">Remove line-height property from mayura-card-modal section in modal.css</span>
+                    </div>
+                    <div class="commit-date">Feb 04, 2026 21:50</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

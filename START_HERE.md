@@ -27,6 +27,17 @@ export GITHUB_TOKEN="github_pat_xxxxxxxxxxxxx"
 source ~/.zshenv
 ```
 
+**Using both github.com and GitHub Enterprise?** Use two tokens and set the Enterprise API URL. Scripts that target Enterprise (e.g. `generate_weekly_reports_excat-plugin.sh`) will use these when set:
+
+```bash
+# github.com (idfc, etc.)
+export GITHUB_TOKEN="github_pat_xxxxxxxxxxxxx"
+
+# GitHub Enterprise (e.g. Adobe repos) — get URL from your org (e.g. https://github.corp.adobe.com/api/v3)
+# export GITHUB_API_URL="https://your-enterprise-host/api/v3"
+export GITHUB_ENTERPRISE_TOKEN="your_enterprise_token"
+```
+
 ### Step 3: Generate Your First Report
 
 ```bash
@@ -34,7 +45,7 @@ source ~/.zshenv
 python github_repo_user_report.py aemsites idfc YOUR_USERNAME \
     --days 7 \
     --format html \
-    --output reports/team/YOUR_USERNAME-idfc-2026-02-02.html
+    --output reports/team/YOUR_USERNAME-idfc-2026-02-02.html \
     --token $GITHUB_TOKEN
 
 # View it
@@ -179,6 +190,12 @@ source ~/.zshenv
 → Token needs `repo` scope
 
 ---
+### run a new week's report
+1. create new folder (such as 2026-02-02) for last week's reports under /reports
+2. move the index file and /team folder into that new dated folder
+3. Now there's no files under /reports and you can run a new one.
+4. view them in local browser file:///Users/chelms/IdeaProjects/reporting-git/reports/index.html
+5. Then do a new push to github for everyone else to see via https://raw.githack.com/helms-charity/reporting-git/main/reports/index.html
 
 ## 🤖 Automate It
 
@@ -186,6 +203,8 @@ Add to crontab (runs every Monday at 9 AM):
 ```bash
 crontab -e
 # Add:
+0 7 * * 1 cd /Users/chelms/IdeaProjects/reporting-git && ./generate_weekly_reports_excat-plugin.sh
+0 8 * * 1 cd /Users/chelms/IdeaProjects/reporting-git && ./generate_weekly_reports_extweb-academy.sh
 0 9 * * 1 cd /Users/chelms/IdeaProjects/reporting-git && ./generate_weekly_reports_idfc.sh
 ```
 
