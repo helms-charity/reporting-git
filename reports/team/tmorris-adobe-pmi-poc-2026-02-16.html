@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @tmorris-adobe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        .commit-list {
+            background: oklch(from #f8f9fa l c h);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .commit-item {
+            padding: 10px;
+            border-left: 3px solid oklch(from #0366d6 l c h);
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .commit-sha {
+            font-family: 'Monaco', monospace;
+            color: oklch(from #0366d6 l c h);
+            font-weight: 600;
+        }
+        
+        .commit-message {
+            margin: 5px 0;
+            color: oklch(from #1f2937 l c h);
+        }
+        
+        .commit-date {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">tmorris-adobe/pmi-poc</div>
+            <div class="username">@tmorris-adobe</div>
+            <div class="meta">
+                📅 Period: February 09, 2026 to February 16, 2026 (7 days) | 
+                🕐 Generated: February 16, 2026 at 13:42:01
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">13</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+10990</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-647</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">💾 Commits in PRs</div>
+                <div class="metric-value">130</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">1</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">2</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">7</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">0</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">0</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">3</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">0</div>
+                <div class="size-description">0 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">1</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">8</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">8</div>
+                <div class="size-description">8 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🔀</span>
+                Pull Requests Opened (13)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#33</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/33" class="pr-link" target="_blank">Issue 32</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+36</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-9</span>
+                    </div>
+                    <div class="pr-stat">📊 45 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#31</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/31" class="pr-link" target="_blank">Issue 16 - corrects beveled edges, borders, and spacing</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+36</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-33</span>
+                    </div>
+                    <div class="pr-stat">📊 69 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 5 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#30</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/30" class="pr-link" target="_blank">Corrects issue 17, corners and borders</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+18</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-6</span>
+                    </div>
+                    <div class="pr-stat">📊 24 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#29</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/29" class="pr-link" target="_blank">Issue 19</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+16</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-8</span>
+                    </div>
+                    <div class="pr-stat">📊 24 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#28</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/28" class="pr-link" target="_blank">Corrects spacing issue</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xs badge-size">XS</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+1</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-1</span>
+                    </div>
+                    <div class="pr-stat">📊 2 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#27</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/27" class="pr-link" target="_blank">Fr patients updates</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+18</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-12</span>
+                    </div>
+                    <div class="pr-stat">📊 30 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 5 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#26</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/26" class="pr-link" target="_blank">Faq updates</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+66</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-14</span>
+                    </div>
+                    <div class="pr-stat">📊 80 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 6 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#25</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/25" class="pr-link" target="_blank">Issue 11</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+68</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-4</span>
+                    </div>
+                    <div class="pr-stat">📊 72 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 5 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#24</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/24" class="pr-link" target="_blank">Issue 12</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+27</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-6</span>
+                    </div>
+                    <div class="pr-stat">📊 33 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#23</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/23" class="pr-link" target="_blank">Issue 13</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+26</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-18</span>
+                    </div>
+                    <div class="pr-stat">📊 44 total changes</div>
+                    <div class="pr-stat">📄 3 files</div>
+                    <div class="pr-stat">💾 9 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#15</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/15" class="pr-link" target="_blank">Sub pages</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 12, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+2768</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-89</span>
+                    </div>
+                    <div class="pr-stat">📊 2857 total changes</div>
+                    <div class="pr-stat">📄 21 files</div>
+                    <div class="pr-stat">💾 37 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#14</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/14" class="pr-link" target="_blank">Hcp improvements</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 10, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+3361</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-154</span>
+                    </div>
+                    <div class="pr-stat">📊 3515 total changes</div>
+                    <div class="pr-stat">📄 103 files</div>
+                    <div class="pr-stat">💾 10 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#8</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/pull/8" class="pr-link" target="_blank">Hcp pages</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 10, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+4549</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-293</span>
+                    </div>
+                    <div class="pr-stat">📊 4842 total changes</div>
+                    <div class="pr-stat">📄 84 files</div>
+                    <div class="pr-stat">💾 42 commits</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by tmorris-adobe (8)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#32</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/32" class="pr-link" target="_blank">Unmatching Section "Pourquoi les patients choisissent-ils Luo? "</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#16</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/16" class="pr-link" target="_blank">/ca/health-care-professionals/</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#17</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/17" class="pr-link" target="_blank">/ca/health-care-professionals/a-guide-for-hcps/ - borders</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#19</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/19" class="pr-link" target="_blank">/ca/health-care-professionals/ - Font size</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#21</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/21" class="pr-link" target="_blank">/ca/faq/how-quickly-does-cbd-work-and-how-long-does-it-last/ - spacing</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#11</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/11" class="pr-link" target="_blank">/ca/patient/ - top section</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 13, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#12</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/12" class="pr-link" target="_blank">/ca/patient/ - Cards </a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 13, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#13</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/13" class="pr-link" target="_blank">Footer</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 13, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🐛</span>
+                Issues Opened (1)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#32</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/32" class="pr-link" target="_blank">Unmatching Section "Pourquoi les patients choisissent-ils Luo? "</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💬</span>
+                Issue Comments (8 comments on 8 issues)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all comments. You may have commented on some issues multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#32</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/32" class="pr-link" target="_blank">Unmatching Section "Pourquoi les patients choisissent-ils Luo? "</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    corrected with issue-32 branch
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#16</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/16" class="pr-link" target="_blank">/ca/health-care-professionals/</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    corrected in branch issue-16
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#17</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/17" class="pr-link" target="_blank">/ca/health-care-professionals/a-guide-for-hcps/ - borders</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    <img width="1545" height="772" alt="Image" src="https://github.com/user-attachments/assets/538b5171-...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#19</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/19" class="pr-link" target="_blank">/ca/health-care-professionals/ - Font size</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Corrected an added animation in branch issue-19
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#21</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/21" class="pr-link" target="_blank">/ca/faq/how-quickly-does-cbd-work-and-how-long-does-it-last/ - spacing</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 15, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    <img width="1571" height="778" alt="Image" src="https://github.com/user-attachments/assets/59f04ed7-...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#11</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/11" class="pr-link" target="_blank">/ca/patient/ - top section</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Tentatively closing per fix in PR - This is not a 100% fix for issue 11, however it should make the ...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#12</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/12" class="pr-link" target="_blank">/ca/patient/ - Cards </a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    <img width="1684" height="1050" alt="Image" src="https://github.com/user-attachments/assets/6787bf7f...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#13</span>
+                    <a href="https://github.com/tmorris-adobe/pmi-poc/issues/13" class="pr-link" target="_blank">Footer</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 13, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Corrected in branch issue-13
+<img width="1727" height="1041" alt="Image" src="https://github.com/use...
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💾</span>
+                Direct Commits (14)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Note: These are direct commits to the repository. Commits within PRs are shown in the PR cards above.</em>
+            </p>
+            <div class="commit-list">
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/11868cda72c06ff5fcec11b3461e9f68ea5ebc6c" class="commit-sha" target="_blank">11868cd</a>
+                        <span class="commit-message">Merge pull request #33 from tmorris-adobe/issue-32</span>
+                    </div>
+                    <div class="commit-date">Feb 15, 2026 19:41</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/dd84f8e75f8e1a1461089c39e55cdbb5457d436c" class="commit-sha" target="_blank">dd84f8e</a>
+                        <span class="commit-message">Merge pull request #31 from tmorris-adobe/issue-16</span>
+                    </div>
+                    <div class="commit-date">Feb 15, 2026 19:00</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/4b239ddb158e2662c05599ab76c1ec6b599466b4" class="commit-sha" target="_blank">4b239dd</a>
+                        <span class="commit-message">Merge pull request #30 from tmorris-adobe/issue-17</span>
+                    </div>
+                    <div class="commit-date">Feb 15, 2026 17:59</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/8af166db1f0e8233b3a9eb7c6c3a99f4f2f07b1d" class="commit-sha" target="_blank">8af166d</a>
+                        <span class="commit-message">Merge pull request #29 from tmorris-adobe/issue-19</span>
+                    </div>
+                    <div class="commit-date">Feb 15, 2026 17:35</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/5dce405000b16db03dc33016edb52bf2d43f3c87" class="commit-sha" target="_blank">5dce405</a>
+                        <span class="commit-message">Merge pull request #28 from tmorris-adobe/issue-21</span>
+                    </div>
+                    <div class="commit-date">Feb 15, 2026 16:53</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/17969cf4f8469bf3a5ae1042d1058aca07d7126a" class="commit-sha" target="_blank">17969cf</a>
+                        <span class="commit-message">Merge pull request #27 from tmorris-adobe/fr-patients-updates</span>
+                    </div>
+                    <div class="commit-date">Feb 15, 2026 02:34</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/adf829ac7ca0fe36cd297cfed2a99099d2ed69de" class="commit-sha" target="_blank">adf829a</a>
+                        <span class="commit-message">Merge pull request #26 from tmorris-adobe/faq-updates</span>
+                    </div>
+                    <div class="commit-date">Feb 13, 2026 23:30</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/eeee738036a719ab8ce0e8a2d9b31fedb1d22179" class="commit-sha" target="_blank">eeee738</a>
+                        <span class="commit-message">Merge pull request #25 from tmorris-adobe/issue-11</span>
+                    </div>
+                    <div class="commit-date">Feb 13, 2026 22:04</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/8b34f678caa834b96cd0f8199ee0eddf7a967f4e" class="commit-sha" target="_blank">8b34f67</a>
+                        <span class="commit-message">Merge pull request #24 from tmorris-adobe/issue-12</span>
+                    </div>
+                    <div class="commit-date">Feb 13, 2026 19:42</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/bccd883a990da2cb91fbf33d417990413bf3b57d" class="commit-sha" target="_blank">bccd883</a>
+                        <span class="commit-message">Merge pull request #23 from tmorris-adobe/issue-13</span>
+                    </div>
+                    <div class="commit-date">Feb 13, 2026 19:06</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/577c27b2ca6bfce1db8582e771d98365bd027ccd" class="commit-sha" target="_blank">577c27b</a>
+                        <span class="commit-message">Reduce gradient-cta section top padding to match production footer spacing</span>
+                    </div>
+                    <div class="commit-date">Feb 13, 2026 17:52</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/51a03355f3c8015d41919cb13d5ce6b869d29d0f" class="commit-sha" target="_blank">51a0335</a>
+                        <span class="commit-message">Merge pull request #15 from tmorris-adobe/sub-pages</span>
+                    </div>
+                    <div class="commit-date">Feb 12, 2026 19:46</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/3bebe2f792b4d220edbdf16edeebfe0bd821d509" class="commit-sha" target="_blank">3bebe2f</a>
+                        <span class="commit-message">Merge pull request #14 from tmorris-adobe/hcp-improvements</span>
+                    </div>
+                    <div class="commit-date">Feb 10, 2026 21:10</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/tmorris-adobe/pmi-poc/commit/ce33527ae7631072c5a1f9f4c2b4eaacda3a4757" class="commit-sha" target="_blank">ce33527</a>
+                        <span class="commit-message">Merge pull request #8 from tmorris-adobe/hcp-pages</span>
+                    </div>
+                    <div class="commit-date">Feb 10, 2026 16:12</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
