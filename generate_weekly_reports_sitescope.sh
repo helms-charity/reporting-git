@@ -17,8 +17,8 @@ OUTPUT_DIR="reports/team"
 
 # Array of usernames to generate reports for
 USERS=(
-    "tmorris-adobe",
-    "dave-fink",
+    "tmorris-adobe"
+    "dave-fink"
     "meejain"
 )
 
