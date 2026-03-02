@@ -367,7 +367,6 @@ def generate_index_html(reports: List[Dict], output_path: Path):
                         <th>Reviews</th>
                         <th>Issues Opened</th>
                         <th>Issues Closed</th>
-                        <th>Comments</th>
                         <th>Commits</th>
                         <th>Lines +</th>
                         <th>Lines -</th>
@@ -400,7 +399,6 @@ def generate_index_html(reports: List[Dict], output_path: Path):
         reviews = get_metric_value('Reviews Given')
         issues_opened = get_metric_value('Issues Opened')
         issues_closed = get_metric_value('Issues Closed')
-        comments = get_metric_value('Issue Comments') or get_metric_value('Comments')
         commits = get_metric_value('Commits')
         lines_added = get_metric_value('Lines Added')
         lines_deleted = get_metric_value('Lines Deleted')
@@ -408,12 +406,11 @@ def generate_index_html(reports: List[Dict], output_path: Path):
         html += f"""                    <tr>
                         <td class="date-cell">{report['date']}</td>
                         <td><a href="team/{report['filename']}" class="username-link">@{report['username']}</a></td>
-                        <td class="repo-cell">{report['repo']}</td>
+                        <td class="repo-cell"><a href="https://github.com/{report['repo']}" target="_blank" rel="noopener">{report['repo']}</a></td>
                         <td class="metric-cell">{prs_merged}</td>
                         <td class="metric-cell">{reviews}</td>
                         <td class="metric-cell">{issues_opened}</td>
                         <td class="metric-cell">{issues_closed}</td>
-                        <td class="metric-cell">{comments}</td>
                         <td class="metric-cell">{commits}</td>
                         <td class="metric-cell positive">{lines_added}</td>
                         <td class="metric-cell negative">{lines_deleted}</td>

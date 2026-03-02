@@ -1,6 +1,7 @@
 # See the HTML list of reports
 - https://raw.githack.com/helms-charity/reporting-git/main/reports/index.html
 - or https://htmlpreview.github.io/?https://github.com/helms-charity/reporting-git/blob/main/reports/index.html
+- See last week's report by adding that Monday's date, such as https://raw.githack.com/helms-charity/reporting-git/main/reports/2026-02-23
 
 # GitHub Repository User Activity Reporter
 
