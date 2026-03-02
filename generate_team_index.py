@@ -125,11 +125,23 @@ def parse_report_file(filepath: Path) -> Optional[Dict]:
         return None
 
 
+def _get_metric_int(metrics: Dict, label_pattern: str) -> int:
+    """Get a metric value as int (for aggregation)."""
+    for key, value in metrics.items():
+        if label_pattern in key:
+            clean_value = re.sub(r'[^\d]', '', value)
+            return int(clean_value) if clean_value else 0
+    return 0
+
+
 def generate_index_html(reports: List[Dict], output_path: Path):
     """Generate index.html with table of all reports"""
     
     # Sort reports by date (newest first), then by username
     reports.sort(key=lambda x: (x['date'], x['username']), reverse=True)
+    
+    # Total PRs merged across all reports (for first stat-card)
+    total_prs_merged = sum(_get_metric_int(r['metrics'], 'PRs Merged') for r in reports)
     
     html = """<!DOCTYPE html>
 <html lang="en">
@@ -312,8 +324,8 @@ def generate_index_html(reports: List[Dict], output_path: Path):
             
             <div class="stats">
                 <div class="stat-card">
-                    <div class="stat-value">{total_reports}</div>
-                    <div class="stat-label">Total Reports</div>
+                    <div class="stat-value">{total_prs_merged}</div>
+                    <div class="stat-label">Total PRs Merged</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">{unique_users}</div>
@@ -469,7 +481,7 @@ def generate_index_html(reports: List[Dict], output_path: Path):
     
     # Fill in template variables
     html = html.format(
-        total_reports=len(reports),
+        total_prs_merged=total_prs_merged,
         unique_users=unique_users,
         unique_repos=unique_repos,
         summary_rows=summary_rows,

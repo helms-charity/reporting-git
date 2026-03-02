@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @sthirumal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        .commit-list {
+            background: oklch(from #f8f9fa l c h);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .commit-item {
+            padding: 10px;
+            border-left: 3px solid oklch(from #0366d6 l c h);
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .commit-sha {
+            font-family: 'Monaco', monospace;
+            color: oklch(from #0366d6 l c h);
+            font-weight: 600;
+        }
+        
+        .commit-message {
+            margin: 5px 0;
+            color: oklch(from #1f2937 l c h);
+        }
+        
+        .commit-date {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">aemdemos/poc-st</div>
+            <div class="username">@sthirumal</div>
+            <div class="meta">
+                📅 Period: February 23, 2026 to March 02, 2026 (7 days) | 
+                🕐 Generated: March 02, 2026 at 09:54:42
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">9</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+6752</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-251</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">💾 Commits in PRs</div>
+                <div class="metric-value">24</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">0</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">0</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">0</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">5</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">4</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">2</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">0</div>
+                <div class="size-description">0 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">11</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">7</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">6</div>
+                <div class="size-description">6 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🔀</span>
+                Pull Requests Opened (11)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#24</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/24" class="pr-link" target="_blank">Add footer block - Feb 27, 2026</a>
+                    <span class="badge badge-open">🔄 Open</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 28, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+187</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-27</span>
+                    </div>
+                    <div class="pr-stat">📊 214 total changes</div>
+                    <div class="pr-stat">📄 12 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#22</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/22" class="pr-link" target="_blank">Add hero block - Feb 27, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xl badge-size">XL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 27, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+597</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-23</span>
+                    </div>
+                    <div class="pr-stat">📊 620 total changes</div>
+                    <div class="pr-stat">📄 5 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#20</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/20" class="pr-link" target="_blank">Add columns, feature-cards, hero blocks - Feb 26, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 26, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+1410</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-26</span>
+                    </div>
+                    <div class="pr-stat">📊 1436 total changes</div>
+                    <div class="pr-stat">📄 11 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#19</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/19" class="pr-link" target="_blank">Add columns, feature-cards, hero blocks - Feb 25, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 26, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+1357</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-117</span>
+                    </div>
+                    <div class="pr-stat">📊 1474 total changes</div>
+                    <div class="pr-stat">📄 9 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#17</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/17" class="pr-link" target="_blank">Update 1 file - Feb 25, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 25, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+411</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 411 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#15</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/15" class="pr-link" target="_blank">Add footer block - Feb 24, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xl badge-size">XL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 25, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+680</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-4</span>
+                    </div>
+                    <div class="pr-stat">📊 684 total changes</div>
+                    <div class="pr-stat">📄 12 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#14</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/14" class="pr-link" target="_blank">Add header block - Feb 24, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+328</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-6</span>
+                    </div>
+                    <div class="pr-stat">📊 334 total changes</div>
+                    <div class="pr-stat">📄 4 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#13</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/13" class="pr-link" target="_blank">Update 1 file</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+202</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 202 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#12</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/12" class="pr-link" target="_blank">Aem 20260219 1407</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xl badge-size">XL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+689</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-24</span>
+                    </div>
+                    <div class="pr-stat">📊 713 total changes</div>
+                    <div class="pr-stat">📄 5 files</div>
+                    <div class="pr-stat">💾 6 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#11</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/11" class="pr-link" target="_blank">Update 1 file - Feb 24, 2026</a>
+                    <span class="badge badge-closed">❌ Closed</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+202</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 202 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#6</span>
+                    <a href="https://github.com/aemdemos/poc-st/pull/6" class="pr-link" target="_blank">Add header block - Feb 23, 2026</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xl badge-size">XL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+689</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-24</span>
+                    </div>
+                    <div class="pr-stat">📊 713 total changes</div>
+                    <div class="pr-stat">📄 5 files</div>
+                    <div class="pr-stat">💾 5 commits</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by sthirumal (7)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#21</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/21" class="pr-link" target="_blank">Fine tuning of styling of home page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 27, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#5</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/5" class="pr-link" target="_blank">Do the styling of the index/home page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 27, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#18</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/18" class="pr-link" target="_blank">Migrate the design from https://jobs.army.mod.uk/</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 27, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#4</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/4" class="pr-link" target="_blank">Migrate the footer of the page - Desktop</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 26, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#16</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/16" class="pr-link" target="_blank">The British Army Project - Migration Plan</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 26, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#3</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/3" class="pr-link" target="_blank">Migrate the header of the page - Desktop</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/1" class="pr-link" target="_blank">Migrate the page jobs.army.mod.uk</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: February 23, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🐛</span>
+                Issues Opened (11)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#23</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/23" class="pr-link" target="_blank">styling of footer - Desktop</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 27, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#21</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/21" class="pr-link" target="_blank">Fine tuning of styling of home page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 27, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#18</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/18" class="pr-link" target="_blank">Migrate the design from https://jobs.army.mod.uk/</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 26, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#16</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/16" class="pr-link" target="_blank">The British Army Project - Migration Plan</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 25, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#10</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/10" class="pr-link" target="_blank">Header for Mobile</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#9</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/9" class="pr-link" target="_blank">Styling of the header</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#8</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/8" class="pr-link" target="_blank">The logic to make search work (functionality of search) in header</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#7</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/7" class="pr-link" target="_blank">Brand logo in header</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#5</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/5" class="pr-link" target="_blank">Do the styling of the index/home page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 23, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#4</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/4" class="pr-link" target="_blank">Migrate the footer of the page - Desktop</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 23, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#3</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/3" class="pr-link" target="_blank">Migrate the header of the page - Desktop</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 23, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💬</span>
+                Issue Comments (6 comments on 6 issues)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all comments. You may have commented on some issues multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#21</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/21" class="pr-link" target="_blank">Fine tuning of styling of home page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 27, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    completed
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#5</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/5" class="pr-link" target="_blank">Do the styling of the index/home page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 27, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    This is completed
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#18</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/18" class="pr-link" target="_blank">Migrate the design from https://jobs.army.mod.uk/</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 27, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    This is completed 
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#4</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/4" class="pr-link" target="_blank">Migrate the footer of the page - Desktop</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 26, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    PR created and merged
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#16</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/16" class="pr-link" target="_blank">The British Army Project - Migration Plan</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 26, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    completed and merged
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1</span>
+                    <a href="https://github.com/aemdemos/poc-st/issues/1" class="pr-link" target="_blank">Migrate the page jobs.army.mod.uk</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 February 23, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    completed
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💾</span>
+                Direct Commits (13)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Note: These are direct commits to the repository. Commits within PRs are shown in the PR cards above.</em>
+            </p>
+            <div class="commit-list">
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/8d96087b2bfd99083c0fe739ce579229ff35d064" class="commit-sha" target="_blank">8d96087</a>
+                        <span class="commit-message">Merge pull request #22 from aemdemos/aem-20260227-1257</span>
+                    </div>
+                    <div class="commit-date">Feb 27, 2026 21:56</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/01081a1d8de418b892683e751870f3d9a814d3de" class="commit-sha" target="_blank">01081a1</a>
+                        <span class="commit-message">Merge pull request #20 from aemdemos/aem-20260226-1538</span>
+                    </div>
+                    <div class="commit-date">Feb 27, 2026 00:15</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/cb6e6b9ab73ee6fc121df9859f6aaec511712834" class="commit-sha" target="_blank">cb6e6b9</a>
+                        <span class="commit-message">Merge pull request #19 from aemdemos/aem-20260225-1721</span>
+                    </div>
+                    <div class="commit-date">Feb 26, 2026 17:34</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/6d3875e574caabe4771280411017b7d6f4897be9" class="commit-sha" target="_blank">6d3875e</a>
+                        <span class="commit-message">Merge pull request #17 from aemdemos/aem-20260225-1540</span>
+                    </div>
+                    <div class="commit-date">Feb 26, 2026 00:03</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/ac89e2a93691e5aa411281a8a88de7e6a0442f4d" class="commit-sha" target="_blank">ac89e2a</a>
+                        <span class="commit-message">Merge pull request #15 from aemdemos/aem-20260224-1743</span>
+                    </div>
+                    <div class="commit-date">Feb 25, 2026 23:14</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/a0eac92d0c56c60993aafeaf1c54172a240f2592" class="commit-sha" target="_blank">a0eac92</a>
+                        <span class="commit-message">Merge pull request #14 from aemdemos/aem-20260224-1452</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 23:19</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/fd763340fc8fb2ef46eb1f3f70fa756f07c29fd5" class="commit-sha" target="_blank">fd76334</a>
+                        <span class="commit-message">Merge pull request #13 from aemdemos/aem-20260224-1144</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 20:35</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/4b53b56773550d8f528d6a501c16467aa3a8affd" class="commit-sha" target="_blank">4b53b56</a>
+                        <span class="commit-message">Merge pull request #12 from aemdemos/aem-20260219-1407</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 20:30</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/8ac9c72c2ef718cdaf5dead0b6e7bfbf393ebc67" class="commit-sha" target="_blank">8ac9c72</a>
+                        <span class="commit-message">Merge pull request #6 from aemdemos/aem-20260223-1618</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 20:08</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/97dfc7aa7c1b6ce959f411796626012094dfa5bf" class="commit-sha" target="_blank">97dfc7a</a>
+                        <span class="commit-message">Delete nav.md</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 00:27</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/09d691978ee8b7f1e7629cabb927e036ef81d6fb" class="commit-sha" target="_blank">09d6919</a>
+                        <span class="commit-message">Delete nav.html</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 00:27</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/1d852ece5c859b5db8a28dcd3502fc066424a237" class="commit-sha" target="_blank">1d852ec</a>
+                        <span class="commit-message">Delete content/nav.md</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 00:26</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/poc-st/commit/c1bc2969e8584f0282459baaed9c4a54121fd42d" class="commit-sha" target="_blank">c1bc296</a>
+                        <span class="commit-message">Delete content/nav.html</span>
+                    </div>
+                    <div class="commit-date">Feb 24, 2026 00:25</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
