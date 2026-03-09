@@ -6,15 +6,17 @@
 # https://wiki.corp.adobe.com/display/git/GHEC+Authorizing+SSH+Keys+and+Tokens+for+SSO
 #   export GITHUB_API_URL="https://your-enterprise-host/api/v3"
 #   export GITHUB_ENTERPRISE_TOKEN="your_enterprise_personal_access_token"
-#
+# 
 # Optional: also set GITHUB_TOKEN for github.com repos (other scripts use it).
 
 set -e  # Exit on error
-
+# https://github.com/Adobe-AEM-Foundation/aem-excat-plugin
+# is:pr is:merged merged:2026-03-02..2026-03-09 author:dfink_adobe  
 REPO_OWNER="Adobe-AEM-Foundation"
 REPO_NAME="aem-exact-plugin"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(

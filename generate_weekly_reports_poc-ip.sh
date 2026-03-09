@@ -14,6 +14,7 @@ REPO_OWNER="aemdemos"
 REPO_NAME="poc-ip"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED="3"
 
 # Array of usernames to generate reports for
 USERS=(

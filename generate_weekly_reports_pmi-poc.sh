@@ -14,6 +14,7 @@ REPO_OWNER="tmorris-adobe"
 REPO_NAME="pmi-poc"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(

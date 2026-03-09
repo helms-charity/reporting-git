@@ -14,17 +14,12 @@ REPO_OWNER="aemsites"
 REPO_NAME="idfc"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(
     "helms-charity"
-    "amarghioali"
-    "bunting-adbe"
-    "iustinp"
     "roperev"
-    "sthirumal"
-    "techmaven"
-    "zhummerz"
 )
 
 # Ensure output directory exists

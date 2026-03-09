@@ -14,6 +14,7 @@ REPO_OWNER="aemsites"
 REPO_NAME="site-scope"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(

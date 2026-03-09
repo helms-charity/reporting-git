@@ -14,10 +14,12 @@ REPO_OWNER="aemdemos"
 REPO_NAME="poc-mh"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(
     "zhummerz"
+    "tmorris-adobe"
 )
 
 # Ensure output directory exists

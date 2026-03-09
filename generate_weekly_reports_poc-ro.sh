@@ -14,10 +14,12 @@ REPO_OWNER="aemdemos"
 REPO_NAME="poc-ro"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(
     "techmaven"
+    "bunting-adbe"
 )
 
 # Ensure output directory exists

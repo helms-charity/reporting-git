@@ -134,7 +134,21 @@ def _get_metric_int(metrics: Dict, label_pattern: str) -> int:
     return 0
 
 
-def generate_index_html(reports: List[Dict], output_path: Path):
+def _sum_pages_migrated_from_scripts(scripts_dir: Path) -> int:
+    """Sum PAGES_MIGRATED values from all generate_weekly_reports_*.sh in scripts_dir."""
+    total = 0
+    for script_path in scripts_dir.glob("generate_weekly_reports_*.sh"):
+        try:
+            content = script_path.read_text(encoding="utf-8")
+            match = re.search(r'PAGES_MIGRATED="(\d*)"', content)
+            if match:
+                total += int(match.group(1) or 0)
+        except (OSError, ValueError):
+            continue
+    return total
+
+
+def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: int = 0):
     """Generate index.html with table of all reports"""
     
     # Sort reports by date (newest first), then by username
@@ -328,8 +342,8 @@ def generate_index_html(reports: List[Dict], output_path: Path):
                     <div class="stat-label">Total PRs Merged</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">{unique_users}</div>
-                    <div class="stat-label">Team Members</div>
+                    <div class="stat-value">{pages_migrated}</div>
+                    <div class="stat-label">Pages Migrated</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">{unique_repos}</div>
@@ -376,7 +390,6 @@ def generate_index_html(reports: List[Dict], output_path: Path):
 """
     
     # Calculate summary stats
-    unique_users = len(set(r['username'] for r in reports))
     unique_repos = len(set(r['repo'] for r in reports))
     
     # Sort reports alphabetically by username
@@ -479,7 +492,7 @@ def generate_index_html(reports: List[Dict], output_path: Path):
     # Fill in template variables
     html = html.format(
         total_prs_merged=total_prs_merged,
-        unique_users=unique_users,
+        pages_migrated=pages_migrated,
         unique_repos=unique_repos,
         summary_rows=summary_rows,
         current_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -525,9 +538,13 @@ def main():
         print("⚠️  No valid reports could be parsed")
         return
     
+    # Sum PAGES_MIGRATED from all generate_weekly_reports_*.sh in project root
+    scripts_dir = Path(__file__).parent
+    pages_migrated = _sum_pages_migrated_from_scripts(scripts_dir)
+    
     # Generate index.html in reports/ directory (one level up from team/)
     index_path = reports_dir / 'index.html'
-    generate_index_html(reports, index_path)
+    generate_index_html(reports, index_path, pages_migrated=pages_migrated)
     
     print(f"\n✨ Index page created: {index_path}")
     print(f"   Open with: open {index_path}")

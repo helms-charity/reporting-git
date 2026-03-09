@@ -14,6 +14,7 @@ REPO_OWNER="iustinp"
 REPO_NAME="iustinp-epa1"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(

@@ -14,10 +14,12 @@ REPO_OWNER="aemdemos"
 REPO_NAME="poc-ba"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED="4"
 
 # Array of usernames to generate reports for
 USERS=(
     "amarghioali"
+    "inasplayground"
 )
 
 # Ensure output directory exists

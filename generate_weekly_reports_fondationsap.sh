@@ -14,6 +14,7 @@ REPO_OWNER="aemdemos"
 REPO_NAME="fondationsaudemarspiguet"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(
