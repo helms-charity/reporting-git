@@ -12,6 +12,8 @@
 set -e  # Exit on error
 # https://github.com/Adobe-AEM-Foundation/aem-excat-plugin
 # is:pr is:merged merged:2026-03-02..2026-03-09 author:dfink_adobe  
+# is:issue author:meejain_adobe created:2026-03-02..2026-03-09
+# is:issue author:dfink_adobe closed:2026-03-02..2026-03-09
 REPO_OWNER="Adobe-AEM-Foundation"
 REPO_NAME="aem-exact-plugin"
 DATE=$(date +%Y-%m-%d)
