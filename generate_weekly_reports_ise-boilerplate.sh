@@ -11,17 +11,14 @@
 set -e  # Exit on error
 
 REPO_OWNER="aemdemos"
-REPO_NAME="audemarspiguet"
+REPO_NAME="ise-boilerplate"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(
-    "rusmeenkhan1"
-    "asthabh23"
-    "nehakaushik2025"
-    "shivanim123"
+    "helms-charity"
 )
 
 # Ensure output directory exists
@@ -68,6 +65,8 @@ for user in "${USERS[@]}"; do
     sleep 2
 done
 
+echo "✅ All reports completed!"
+
 echo ""
 echo "---"
 echo "📋 Generating team index..."
@@ -75,6 +74,6 @@ python generate_team_index.py
 echo "✓ Team index: reports/index.html"
 
 echo ""
-echo "✅ Done! Generated ${#USERS[@]} reports."
+echo "✅ Done! Generated ${#USERS[@]} reports in parallel."
 echo "View the team index at: file://$(pwd)/reports/index.html"
 

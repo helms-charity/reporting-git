@@ -148,7 +148,24 @@ def _sum_pages_migrated_from_scripts(scripts_dir: Path) -> int:
     return total
 
 
-def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: int = 0):
+def _repo_to_pages_migrated_map(scripts_dir: Path) -> Dict[str, int]:
+    """Map owner/repo -> PAGES_MIGRATED from each generate_weekly_reports_*.sh."""
+    result = {}
+    for script_path in scripts_dir.glob("generate_weekly_reports_*.sh"):
+        try:
+            content = script_path.read_text(encoding="utf-8")
+            owner_match = re.search(r'REPO_OWNER="([^"]*)"', content)
+            name_match = re.search(r'REPO_NAME="([^"]*)"', content)
+            pages_match = re.search(r'PAGES_MIGRATED="(\d*)"', content)
+            if owner_match and name_match:
+                repo_key = f"{owner_match.group(1)}/{name_match.group(1)}"
+                result[repo_key] = int(pages_match.group(1) or 0) if pages_match else 0
+        except (OSError, ValueError):
+            continue
+    return result
+
+
+def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: int = 0, repo_to_pages_migrated: Optional[Dict[str, int]] = None):
     """Generate index.html with table of all reports"""
     
     # Sort reports by date (newest first), then by username
@@ -381,7 +398,7 @@ def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: 
                         <th>Reviews</th>
                         <th>Issues Opened</th>
                         <th>Issues Closed</th>
-                        <th>Commits</th>
+                        <th>Pages Migrated</th>
                         <th>Lines +</th>
                         <th>Lines -</th>
                     </tr>
@@ -391,6 +408,7 @@ def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: 
     
     # Calculate summary stats
     unique_repos = len(set(r['repo'] for r in reports))
+    repo_pages = repo_to_pages_migrated or {}
     
     # Sort reports alphabetically by username
     sorted_reports = sorted(reports, key=lambda r: r['username'].lower())
@@ -412,7 +430,7 @@ def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: 
         reviews = get_metric_value('Reviews Given')
         issues_opened = get_metric_value('Issues Opened')
         issues_closed = get_metric_value('Issues Closed')
-        commits = get_metric_value('Commits')
+        pages_migrated_cell = repo_pages.get(report['repo'], 0)
         lines_added = get_metric_value('Lines Added')
         lines_deleted = get_metric_value('Lines Deleted')
         
@@ -424,7 +442,7 @@ def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: 
                         <td class="metric-cell">{reviews}</td>
                         <td class="metric-cell">{issues_opened}</td>
                         <td class="metric-cell">{issues_closed}</td>
-                        <td class="metric-cell">{commits}</td>
+                        <td class="metric-cell">{pages_migrated_cell}</td>
                         <td class="metric-cell positive">{lines_added}</td>
                         <td class="metric-cell negative">{lines_deleted}</td>
                     </tr>
@@ -538,13 +556,14 @@ def main():
         print("⚠️  No valid reports could be parsed")
         return
     
-    # Sum PAGES_MIGRATED from all generate_weekly_reports_*.sh in project root
+    # Sum PAGES_MIGRATED and build repo -> PAGES_MIGRATED map from scripts
     scripts_dir = Path(__file__).parent
     pages_migrated = _sum_pages_migrated_from_scripts(scripts_dir)
+    repo_to_pages_migrated = _repo_to_pages_migrated_map(scripts_dir)
     
     # Generate index.html in reports/ directory (one level up from team/)
     index_path = reports_dir / 'index.html'
-    generate_index_html(reports, index_path, pages_migrated=pages_migrated)
+    generate_index_html(reports, index_path, pages_migrated=pages_migrated, repo_to_pages_migrated=repo_to_pages_migrated)
     
     print(f"\n✨ Index page created: {index_path}")
     print(f"   Open with: open {index_path}")

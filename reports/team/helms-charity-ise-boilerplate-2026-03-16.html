@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @helms-charity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        .commit-list {
+            background: oklch(from #f8f9fa l c h);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .commit-item {
+            padding: 10px;
+            border-left: 3px solid oklch(from #0366d6 l c h);
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .commit-sha {
+            font-family: 'Monaco', monospace;
+            color: oklch(from #0366d6 l c h);
+            font-weight: 600;
+        }
+        
+        .commit-message {
+            margin: 5px 0;
+            color: oklch(from #1f2937 l c h);
+        }
+        
+        .commit-date {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">aemdemos/ise-boilerplate</div>
+            <div class="username">@helms-charity</div>
+            <div class="meta">
+                📅 Period: March 09, 2026 to March 16, 2026 (7 days) | 
+                🕐 Generated: March 16, 2026 at 10:24:39
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">9</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+9693</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-2038</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">💾 Commits in PRs</div>
+                <div class="metric-value">20</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">1</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">1</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">0</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">1</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">2</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">4</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">0</div>
+                <div class="size-description">0 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">6</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">5</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">0</div>
+                <div class="size-description">0 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🔀</span>
+                Pull Requests Opened (9)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#15</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/15" class="pr-link" target="_blank">small change</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xs badge-size">XS</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 16, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+0</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-4</span>
+                    </div>
+                    <div class="pr-stat">📊 4 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#14</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/14" class="pr-link" target="_blank">add design tokens</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xl badge-size">XL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+487</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-174</span>
+                    </div>
+                    <div class="pr-stat">📊 661 total changes</div>
+                    <div class="pr-stat">📄 45 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#12</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/12" class="pr-link" target="_blank">add style skills</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 15, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+4234</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-3</span>
+                    </div>
+                    <div class="pr-stat">📊 4237 total changes</div>
+                    <div class="pr-stat">📄 7 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#10</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/10" class="pr-link" target="_blank">card, card-carousel, utils.js, combine video js</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 14, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+792</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-278</span>
+                    </div>
+                    <div class="pr-stat">📊 1070 total changes</div>
+                    <div class="pr-stat">📄 28 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#8</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/8" class="pr-link" target="_blank">testing UE</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xl badge-size">XL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 14, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+600</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-9</span>
+                    </div>
+                    <div class="pr-stat">📊 609 total changes</div>
+                    <div class="pr-stat">📄 11 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#7</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/7" class="pr-link" target="_blank">forgot to update accordion in ue.js</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+8</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-3</span>
+                    </div>
+                    <div class="pr-stat">📊 11 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#6</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/6" class="pr-link" target="_blank">separate slider.js</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+457</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-932</span>
+                    </div>
+                    <div class="pr-stat">📊 1389 total changes</div>
+                    <div class="pr-stat">📄 13 files</div>
+                    <div class="pr-stat">💾 4 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#4</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/4" class="pr-link" target="_blank">redo accordion</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+58</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-53</span>
+                    </div>
+                    <div class="pr-stat">📊 111 total changes</div>
+                    <div class="pr-stat">📄 7 files</div>
+                    <div class="pr-stat">💾 4 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#2</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/pull/2" class="pr-link" target="_blank">add da ue, security fixes</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+3057</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-582</span>
+                    </div>
+                    <div class="pr-stat">📊 3639 total changes</div>
+                    <div class="pr-stat">📄 41 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by helms-charity (5)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#13</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/13" class="pr-link" target="_blank">add design sheet feature</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: March 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#9</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/9" class="pr-link" target="_blank">card + card-carousel blocks</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: March 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#5</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/5" class="pr-link" target="_blank">Carousel slider and placeholder.json</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: March 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#3</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/3" class="pr-link" target="_blank">update accordion</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: March 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/1" class="pr-link" target="_blank">Add linting, da boilerplate items</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: March 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🐛</span>
+                Issues Opened (6)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#13</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/13" class="pr-link" target="_blank">add design sheet feature</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#11</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/11" class="pr-link" target="_blank">Add style skills</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#9</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/9" class="pr-link" target="_blank">card + card-carousel blocks</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#5</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/5" class="pr-link" target="_blank">Carousel slider and placeholder.json</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#3</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/3" class="pr-link" target="_blank">update accordion</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1</span>
+                    <a href="https://github.com/aemdemos/ise-boilerplate/issues/1" class="pr-link" target="_blank">Add linting, da boilerplate items</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 March 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💾</span>
+                Direct Commits (12)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Note: These are direct commits to the repository. Commits within PRs are shown in the PR cards above.</em>
+            </p>
+            <div class="commit-list">
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/a11c9ee09a95c1f39ec3c3a9cf123dfc6a30e3b0" class="commit-sha" target="_blank">a11c9ee</a>
+                        <span class="commit-message">Merge pull request #15 from aemdemos/13-designsheet</span>
+                    </div>
+                    <div class="commit-date">Mar 16, 2026 13:18</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/ac74cc5cf41a564eac2a0ce83e1559c4eba0ec77" class="commit-sha" target="_blank">ac74cc5</a>
+                        <span class="commit-message">Merge pull request #14 from aemdemos/13-designsheet</span>
+                    </div>
+                    <div class="commit-date">Mar 15, 2026 17:10</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/d875c1af16d24fb402dc6148bd3a70467f196396" class="commit-sha" target="_blank">d875c1a</a>
+                        <span class="commit-message">Merge pull request #12 from aemdemos/11-styleskills</span>
+                    </div>
+                    <div class="commit-date">Mar 15, 2026 15:04</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/c50f9ee47d9a900ee9d16ca89805b30e23ddcf15" class="commit-sha" target="_blank">c50f9ee</a>
+                        <span class="commit-message">Merge pull request #10 from aemdemos/9-card</span>
+                    </div>
+                    <div class="commit-date">Mar 14, 2026 18:58</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/6ec6feaf80f6581ad06f419ca9e2c597a2a5a841" class="commit-sha" target="_blank">6ec6fea</a>
+                        <span class="commit-message">Merge pull request #8 from aemdemos/5-carousel</span>
+                    </div>
+                    <div class="commit-date">Mar 14, 2026 16:05</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/55f88e1b4ae9375a2d3c05983d59766e7a73d493" class="commit-sha" target="_blank">55f88e1</a>
+                        <span class="commit-message">Merge pull request #7 from aemdemos/5-carousel</span>
+                    </div>
+                    <div class="commit-date">Mar 13, 2026 20:00</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/1f5e5012aee2a16d7e728b26726bd637189522bb" class="commit-sha" target="_blank">1f5e501</a>
+                        <span class="commit-message">Merge pull request #6 from aemdemos/5-carousel</span>
+                    </div>
+                    <div class="commit-date">Mar 13, 2026 19:48</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/5b34475f8bc5b8a897a6f6a3bc1422f9bef31e70" class="commit-sha" target="_blank">5b34475</a>
+                        <span class="commit-message">Merge pull request #4 from aemdemos/3-accordion</span>
+                    </div>
+                    <div class="commit-date">Mar 13, 2026 17:12</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/c6965c40b6482a901a75564f0e62ac7ac9feae13" class="commit-sha" target="_blank">c6965c4</a>
+                        <span class="commit-message">Merge pull request #2 from aemdemos/1-security</span>
+                    </div>
+                    <div class="commit-date">Mar 13, 2026 14:16</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/950e32e996cac49a38c5e38e67b6ba93321f7c05" class="commit-sha" target="_blank">950e32e</a>
+                        <span class="commit-message">Rename paths.json to paths-old-json</span>
+                    </div>
+                    <div class="commit-date">Mar 12, 2026 13:24</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/b5ea972226b5d938109b64f0143c5851a31ecbd4" class="commit-sha" target="_blank">b5ea972</a>
+                        <span class="commit-message">Rename fstab.yaml to fstab-old-yaml</span>
+                    </div>
+                    <div class="commit-date">Mar 12, 2026 13:22</div>
+                </div>
+
+                <div class="commit-item">
+                    <div>
+                        <a href="https://github.com/aemdemos/ise-boilerplate/commit/b107e8b4796129b0eb53c068a2f53af11ddf89d8" class="commit-sha" target="_blank">b107e8b</a>
+                        <span class="commit-message">Initial commit</span>
+                    </div>
+                    <div class="commit-date">Mar 12, 2026 13:21</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

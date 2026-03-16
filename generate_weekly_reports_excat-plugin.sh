@@ -11,9 +11,9 @@
 
 set -e  # Exit on error
 # https://github.com/Adobe-AEM-Foundation/aem-excat-plugin
-# is:pr is:merged merged:2026-03-02..2026-03-09 author:dfink_adobe  
-# is:issue author:meejain_adobe created:2026-03-02..2026-03-09
-# is:issue author:dfink_adobe closed:2026-03-02..2026-03-09
+# is:pr is:merged merged:2026-03-09..2026-03-16 author:dfink_adobe  (1 = meet)
+# is:issue created:2026-03-09..2026-03-16 author:meejain_adobe (astha = 2)
+# is:issue closed:2026-03-09..2026-03-16 author:meejain_adobe
 REPO_OWNER="Adobe-AEM-Foundation"
 REPO_NAME="aem-exact-plugin"
 DATE=$(date +%Y-%m-%d)
@@ -24,6 +24,7 @@ PAGES_MIGRATED=""
 USERS=(
     "dfink_adobe"
     "meejain_adobe"
+    "asthabharga_adobe"
 )
 
 # Ensure output directory exists
@@ -49,7 +50,7 @@ for user in "${USERS[@]}"; do
     echo "Starting report for @${user}..."
     
     # Run sequentially (no & at end). Use Enterprise API URL and token when set.
-    CMD=(python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" --days 7 --format html --output "$OUTPUT_FILE")
+    CMD=(python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" --days 7 --format html --pages-migrated "${PAGES_MIGRATED:-0}" --output "$OUTPUT_FILE")
     if [ -n "$GITHUB_API_URL" ]; then
         CMD+=(--api-url "$GITHUB_API_URL")
     fi

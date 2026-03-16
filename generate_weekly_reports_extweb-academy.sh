@@ -52,11 +52,13 @@ for user in "${USERS[@]}"; do
             --days 7 \
             --format html \
             --token "$GITHUB_TOKEN" \
+            --pages-migrated "${PAGES_MIGRATED:-0}" \
             --output "$OUTPUT_FILE"
     else
         python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" \
             --days 7 \
             --format html \
+            --pages-migrated "${PAGES_MIGRATED:-0}" \
             --output "$OUTPUT_FILE"
     fi
     

@@ -14,7 +14,7 @@ REPO_OWNER="aemdemos"
 REPO_NAME="poc-ip"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="3"
+PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(
@@ -49,11 +49,13 @@ for user in "${USERS[@]}"; do
             --days 7 \
             --format html \
             --token "$GITHUB_TOKEN" \
+            --pages-migrated "${PAGES_MIGRATED:-0}" \
             --output "$OUTPUT_FILE"
     else
         python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" \
             --days 7 \
             --format html \
+            --pages-migrated "${PAGES_MIGRATED:-0}" \
             --output "$OUTPUT_FILE"
     fi
     

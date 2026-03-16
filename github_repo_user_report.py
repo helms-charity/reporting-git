@@ -450,12 +450,12 @@ class GitHubRepoUserAnalyzer:
             }
             self.stats["commits_authored"].append(commit_data)
     
-    def generate_report(self, days: int, format: str = "text") -> str:
+    def generate_report(self, days: int, format: str = "text", pages_migrated: int = 0) -> str:
         """Generate report in specified format"""
         if format == "text":
             return self._generate_text_report(days)
         elif format == "html":
-            return self._generate_html_report(days)
+            return self._generate_html_report(days, pages_migrated=pages_migrated)
         elif format == "json":
             return self._generate_json_report()
     
@@ -593,7 +593,7 @@ class GitHubRepoUserAnalyzer:
         
         return "\n".join(report)
     
-    def _generate_html_report(self, days: int) -> str:
+    def _generate_html_report(self, days: int, pages_migrated: int = 0) -> str:
         """Generate HTML report with modern styling"""
         total_prs = len(self.stats['pull_requests_opened'])
         total_merged = len(self.stats['pull_requests_merged'])
@@ -976,8 +976,8 @@ class GitHubRepoUserAnalyzer:
                 <div class="metric-value">-{self.stats['total_deletions']}</div>
             </div>
             <div class="metric-card" style="background: transparent">
-                <div class="metric-label">💾 Commits in PRs</div>
-                <div class="metric-value">{total_commits_in_prs}</div>
+                <div class="metric-label">📄 Pages Migrated</div>
+                <div class="metric-value">{pages_migrated}</div>
             </div>
         </div>
         
@@ -1321,6 +1321,7 @@ Examples:
     parser.add_argument("--output", "-o", help="Output file (default: stdout)")
     parser.add_argument("--token", help="GitHub personal access token (or set GITHUB_TOKEN / GITHUB_ENTERPRISE_TOKEN env var)")
     parser.add_argument("--api-url", help="GitHub API base URL for Enterprise (e.g. https://github.corp.example.com/api/v3). Or set GITHUB_API_URL.")
+    parser.add_argument("--pages-migrated", type=int, default=0, help="Pages migrated count (for this repo's report card; set in the weekly script).")
     
     args = parser.parse_args()
     
@@ -1356,7 +1357,7 @@ Examples:
     analyzer.analyze_activity(args.days, end_date)
     
     # Generate report
-    report = analyzer.generate_report(days=args.days, format=args.format)
+    report = analyzer.generate_report(days=args.days, format=args.format, pages_migrated=args.pages_migrated)
     
     # Output report
     if args.output:
