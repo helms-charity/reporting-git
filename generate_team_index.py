@@ -15,6 +15,32 @@ from html.parser import HTMLParser
 from typing import Dict, List, Optional
 
 
+def load_user_display_names(path: Path) -> Dict[str, str]:
+    """
+    Load login -> real name from user_names.json.
+    Supports schema with 'people'[].accounts[] or legacy flat { "login": "Name" }.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return {}
+    if isinstance(data, dict) and "people" in data:
+        out: Dict[str, str] = {}
+        for person in data.get("people", []):
+            name = person.get("name", "")
+            for acc in person.get("accounts", []):
+                login = acc.get("login")
+                if login:
+                    out[login] = name
+        return out
+    # Legacy: { "githublogin": "Real Name", ... }
+    if isinstance(data, dict):
+        skip = {"schema_version"}
+        return {k: v for k, v in data.items() if k not in skip and isinstance(v, str)}
+    return {}
+
+
 class ReportMetricsParser(HTMLParser):
     """Parse HTML report to extract metrics"""
     
@@ -461,12 +487,11 @@ def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: 
 """
     
     # Load user names mapping
-    user_names = {}
-    user_names_file = Path(__file__).parent / 'user_names.json'
+    user_names_file = Path(__file__).parent / "user_names.json"
+    user_names: Dict[str, str] = {}
     if user_names_file.exists():
         try:
-            with open(user_names_file, 'r', encoding='utf-8') as f:
-                user_names = json.load(f)
+            user_names = load_user_display_names(user_names_file)
         except Exception as e:
             print(f"Warning: Could not load user_names.json: {e}")
     

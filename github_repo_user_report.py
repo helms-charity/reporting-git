@@ -35,7 +35,6 @@ class GitHubRepoUserAnalyzer:
             "issues_opened": [],
             "issues_closed": [],
             "issue_comments": [],
-            "commits_authored": [],
             "review_comments_given": 0,
             "total_additions": 0,
             "total_deletions": 0,
@@ -206,28 +205,6 @@ class GitHubRepoUserAnalyzer:
         
         print(f"Total reviews found: {len(all_reviews)}")
         return all_reviews
-    
-    def fetch_user_commits(self, since_date: datetime) -> List[Dict]:
-        """Fetch commits authored by the user in the repo"""
-        print(f"Fetching commits by @{self.username} in {self.owner}/{self.repo}...")
-        
-        url = f"{self.base_url}/repos/{self.owner}/{self.repo}/commits"
-        params = {
-            "author": self.username,
-            "since": since_date.isoformat(),
-            "per_page": 100
-        }
-        
-        response = requests.get(url, headers=self.headers, params=params)
-        
-        if response.status_code != 200:
-            print(f"Error fetching commits: {response.status_code}")
-            return []
-        
-        commits = response.json()
-        print(f"Found {len(commits)} commits")
-        
-        return commits
     
     def fetch_user_issues(self, since_date: datetime) -> List[Dict]:
         """Fetch issues opened by the user in the repo"""
@@ -438,17 +415,6 @@ class GitHubRepoUserAnalyzer:
                 "body": comment.get("body", "")[:200],
             }
             self.stats["issue_comments"].append(comment_data)
-        
-        # Fetch commits (direct commits, not in PRs)
-        commits = self.fetch_user_commits(since_date)
-        for commit in commits:
-            commit_data = {
-                "sha": commit["sha"][:7],
-                "message": commit["commit"]["message"].split('\n')[0],
-                "date": commit["commit"]["author"]["date"],
-                "url": commit["html_url"],
-            }
-            self.stats["commits_authored"].append(commit_data)
     
     def generate_report(self, days: int, format: str = "text", pages_migrated: int = 0) -> str:
         """Generate report in specified format"""
@@ -492,7 +458,6 @@ class GitHubRepoUserAnalyzer:
         unique_issues = len(set(c['issue_number'] for c in self.stats['issue_comments']))
         report.append(f"Unique Issues Commented:  {unique_issues}")
         report.append(f"Commits in PRs:           {self.stats.get('total_commits_in_prs', 0)}")
-        report.append(f"Direct Commits:           {len(self.stats['commits_authored'])}")
         report.append(f"Total Lines Added:        +{self.stats['total_additions']}")
         report.append(f"Total Lines Deleted:      -{self.stats['total_deletions']}")
         report.append(f"Total Files Changed:      {self.stats['total_files_changed']}")
@@ -578,19 +543,6 @@ class GitHubRepoUserAnalyzer:
                 report.append(f"    Preview: {comment['body'][:100]}...")
                 report.append("")
         
-        # Commits
-        if self.stats["commits_authored"]:
-            report.append(f"💾 DIRECT COMMITS ({len(self.stats['commits_authored'])})")
-            report.append("-" * 80)
-            report.append("Note: These are direct commits. Commits in PRs are shown above.")
-            report.append("")
-            for commit in self.stats["commits_authored"][:10]:  # Show first 10
-                report.append(f"  • {commit['sha']}: {commit['message']}")
-                report.append(f"    {commit['date']}")
-            if len(self.stats["commits_authored"]) > 10:
-                report.append(f"  ... and {len(self.stats['commits_authored']) - 10} more")
-            report.append("")
-        
         return "\n".join(report)
     
     def _generate_html_report(self, days: int, pages_migrated: int = 0) -> str:
@@ -603,8 +555,6 @@ class GitHubRepoUserAnalyzer:
         total_issues_closed = len(self.stats['issues_closed'])
         total_issue_comments = len(self.stats['issue_comments'])
         unique_issues_commented = len(set(c['issue_number'] for c in self.stats['issue_comments']))
-        total_commits = len(self.stats['commits_authored'])
-        total_commits_in_prs = self.stats.get('total_commits_in_prs', 0)
         
         html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -900,36 +850,6 @@ class GitHubRepoUserAnalyzer:
             margin-top: 5px;
         }}
         
-        .commit-list {{
-            background: oklch(from #f8f9fa l c h);
-            border-radius: 8px;
-            padding: 20px;
-        }}
-        
-        .commit-item {{
-            padding: 10px;
-            border-left: 3px solid oklch(from #0366d6 l c h);
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 4px;
-        }}
-        
-        .commit-sha {{
-            font-family: 'Monaco', monospace;
-            color: oklch(from #0366d6 l c h);
-            font-weight: 600;
-        }}
-        
-        .commit-message {{
-            margin: 5px 0;
-            color: oklch(from #1f2937 l c h);
-        }}
-        
-        .commit-date {{
-            font-size: 0.85em;
-            color: oklch(from #6c757d l c h);
-        }}
-        
         @media (max-width: 768px) {{
             .metrics-grid {{
                 grid-template-columns: 1fr;
@@ -976,7 +896,7 @@ class GitHubRepoUserAnalyzer:
                 <div class="metric-value">-{self.stats['total_deletions']}</div>
             </div>
             <div class="metric-card" style="background: transparent">
-                <div class="metric-label">📄 Pages Migrated</div>
+                <div class="metric-label">📄 Pg Migrated (group)</div>
                 <div class="metric-value">{pages_migrated}</div>
             </div>
         </div>
@@ -1243,38 +1163,6 @@ class GitHubRepoUserAnalyzer:
             </div>
 """
             html += "        </div>\n"
-        
-        # Commits Section (only show if we have direct commits)
-        if self.stats["commits_authored"]:
-            html += f"""
-        <div class="section">
-            <h2 class="section-title">
-                <span>💾</span>
-                Direct Commits ({len(self.stats['commits_authored'])})
-            </h2>
-            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
-                <em>Note: These are direct commits to the repository. Commits within PRs are shown in the PR cards above.</em>
-            </p>
-            <div class="commit-list">
-"""
-            for commit in self.stats["commits_authored"][:15]:  # Show first 15
-                commit_date = datetime.strptime(commit['date'], "%Y-%m-%dT%H:%M:%SZ").strftime('%b %d, %Y %H:%M')
-                html += f"""
-                <div class="commit-item">
-                    <div>
-                        <a href="{commit['url']}" class="commit-sha" target="_blank">{commit['sha']}</a>
-                        <span class="commit-message">{commit['message']}</span>
-                    </div>
-                    <div class="commit-date">{commit_date}</div>
-                </div>
-"""
-            if len(self.stats["commits_authored"]) > 15:
-                html += f"<p style='text-align: center; margin-top: 20px; color: #6c757d;'>... and {len(self.stats['commits_authored']) - 15} more commits</p>"
-            
-            html += """
-            </div>
-        </div>
-"""
         
         html += """
     </div>

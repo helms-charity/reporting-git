@@ -1,0 +1,11 @@
+{
+    "description": "Optional allowlist when not using PAT-per-user repo discovery, or to intersect with GET /user/repos results.",
+    "repos": [
+      "aemsites/site-scope",
+      "Adobe-AEM-Foundation/aem-experience-catalyst"
+    ],
+    "orgs": [
+      "meejain",
+      "aemsites"
+    ]
+  }

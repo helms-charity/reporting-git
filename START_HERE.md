@@ -1,4 +1,9 @@
 # 🚀 GitHub Repository User Activity Reporter
+RULES
+- ./generate_user_activity_reports.sh can only get a user's public github repo info.
+- for private repos, need to add users to (and run) a separate script for that repo, .generate_weekly_reports_sitescop.sh 
+- Same goes for _adobe internal usernames. I would need each user's PAT in order to see their stuff.
+- So, I'd have to go to a user's profile page to see what they have contributed to, or just ask them.
 
 **Get your first report in 5 minutes!**
 
@@ -34,7 +39,7 @@ source ~/.zshenv
 export GITHUB_TOKEN="github_pat_xxxxxxxxxxxxx"
 
 # GitHub Enterprise (e.g. Adobe repos) — get URL from your org (e.g. https://github.corp.adobe.com/api/v3)
-# export GITHUB_API_URL="https://your-enterprise-host/api/v3"
+# export GITHUB_API_URL="https://api.github.com"
 export GITHUB_ENTERPRISE_TOKEN="your_enterprise_token"
 ```
 
@@ -140,12 +145,17 @@ open reports/index.html
 
 ### Real Names (Optional)
 
-Create `user_names.json`:
+Create `user_names.json` (real name first; `github.com` vs `enterprise` per login):
 
 ```json
 {
-  "helms-charity": "Charity Helms",
-  "teammate1": "John Doe"
+  "schema_version": 1,
+  "people": [
+    {
+      "name": "John Doe",
+      "accounts": [{ "login": "teammate1", "host": "github.com" }]
+    }
+  ]
 }
 ```
 
@@ -155,6 +165,27 @@ Follow this pattern for team index to work:
 ```
 reports/team/username-repo_name-yyyy-mm-dd.html
 ```
+
+Multi-repo runs from `generate_user_activity_reports.py` use:
+```
+reports/team/username-owner-repo_name-yyyy-mm-dd.html
+```
+The index parser reads owner/repo from the HTML body, not only the filename.
+
+### Multi-repo orchestration (optional)
+
+Generate reports for every `(login, repo)` from `user_names.json` with a JSON ledger under `reports/user_activity/`.
+
+**Public events only (no `repos_allowlist.json`):** same repo discovery as `list_repos_from_user_events.py`:
+
+```bash
+export GITHUB_TOKEN=...
+export GITHUB_API_URL=...   # if you have Enterprise accounts in user_names.json
+export GITHUB_ENTERPRISE_TOKEN=...
+python generate_user_activity_reports.py --from-user-names --repos-from-events --days 7
+```
+
+**Allowlist / API discovery** instead: use `--repos-config repos_allowlist.json` (see `repos_allowlist.example.json`). See README for `--max-repos`, rate limits, and tokens.
 
 ---
 

@@ -11,15 +11,16 @@
 set -e  # Exit on error
 
 REPO_OWNER="aemdemos"
-REPO_NAME="poc-ba"
+REPO_NAME="summit-avv"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="8"
+PAGES_MIGRATED="1"
 
 # Array of usernames to generate reports for
 USERS=(
     "amarghioali"
     "inasplayground"
+    "iustinp"
 )
 
 # Ensure output directory exists

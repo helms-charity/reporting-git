@@ -18,7 +18,6 @@ PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(
-    "tmorris-adobe"
     "dave-fink"
     "meejain"
 )

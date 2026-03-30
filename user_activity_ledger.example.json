@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-03-23T12:00:00Z",
+  "date": "2026-03-23",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "pat_and_allowlist",
+  "days": 7,
+  "repos_considered": [
+    { "full_name": "aemsites/idfc", "source": "api" },
+    { "full_name": "aemdemos/foo", "source": "allowlist" }
+  ],
+  "runs": [
+    {
+      "full_name": "aemsites/idfc",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemsites-idfc-2026-03-23.html",
+      "rate_limit_remaining": 4821
+    },
+    {
+      "full_name": "aemdemos/foo",
+      "status": "error",
+      "error": "HTTP 404",
+      "rate_limit_remaining": 4819
+    }
+  ],
+  "summary": { "ok": 1, "error": 1, "skipped": 0 }
+}

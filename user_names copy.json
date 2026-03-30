@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "people": [
+    {
+      "name": "Astha Bhargava",
+      "accounts": [
+        { "login": "asthabh23", "host": "github.com" },
+        { "login": "asthabharga_adobe", "host": "enterprise" }
+      ]
+    },
+    {
+      "name": "Bogdan Amarghioali",
+      "accounts": [{ "login": "amarghioali", "host": "github.com" }]
+    },
+    {
+      "name": "Charity Helms",
+      "accounts": [
+        { "login": "helms-charity", "host": "github.com" },
+        { "login": "chelms_adobe", "host": "enterprise" }
+      ]
+    },
+    {
+      "name": "Dave Fink",
+      "accounts": [
+        { "login": "dave-fink", "host": "github.com" },
+        { "login": "dfink_adobe", "host": "enterprise" }
+      ]
+    },
+    {
+      "name": "Elena Leopold",
+      "accounts": [{ "login": "inasplayground", "host": "github.com" }]
+    },
+    {
+      "name": "Evan Roper",
+      "accounts": [{ "login": "roperev", "host": "github.com" }]
+    },
+    {
+      "name": "Iustin Popescu",
+      "accounts": [{ "login": "iustinp", "host": "github.com" }]
+    },
+    {
+      "name": "Josh Bunting",
+      "accounts": [{ "login": "bunting-adbe", "host": "github.com" }]
+    },
+    {
+      "name": "Matt Horton",
+      "accounts": [{ "login": "zhummerz", "host": "github.com" }]
+    },
+    {
+      "name": "Meet Kumar Jain",
+      "accounts": [
+        { "login": "meejain", "host": "github.com" },
+        { "login": "meejain_adobe", "host": "enterprise" }
+      ]
+    },
+    {
+      "name": "Neha Kaushik",
+      "accounts": [{ "login": "nehakaushik2025", "host": "github.com" }]
+    },
+    {
+      "name": "Ross Oliver",
+      "accounts": [{ "login": "techmaven", "host": "github.com" }]
+    },
+    {
+      "name": "Rusmeen Khan",
+      "accounts": [{ "login": "rusmeenkhan1", "host": "github.com" }]
+    },
+    {
+      "name": "Shivani M",
+      "accounts": [{ "login": "shivanim123", "host": "github.com" }]
+    },
+    {
+      "name": "Swapna Thirumala",
+      "accounts": [{ "login": "sthirumal", "host": "github.com" }]
+    },
+    {
+      "name": "Tyler Morris",
+      "accounts": [{ "login": "tmorris-adobe", "host": "enterprise" }]
+    }
+  ]
+}

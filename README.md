@@ -18,7 +18,7 @@ Repository-specific reports with comprehensive metrics:
 - 🐛 **Issues Opened** - Track new issues created
 - ✅ **Issues Closed** - Track issues closed by the user
 - 💬 **Issue Comments** - See all comments made on issues with previews
-- 💾 **Commits** - Track commits in PRs and direct commits
+- 💾 **Commits** - Commit counts per PR (on each PR branch)
 - 📈 **Lines Added/Deleted** - Full code change tracking
 - 🏆 **Team Index** - Aggregated team dashboard with individual and summary views
 
@@ -181,18 +181,95 @@ open reports/index.html
 
 ### 4. Configure User Real Names
 
-Create a `user_names.json` file in the project root to map GitHub usernames to real names:
+Create a `user_names.json` file in the project root. Use the `people` format (real name first; multiple logins per person are supported):
 
 ```json
 {
-  "helms-charity": "Charity Helms",
-  "amarghioali": "Bogdan Amarghioali",
-  "bunting-adbe": "Josh Bunting",
-  "teammate1": "Real Name"
+  "schema_version": 1,
+  "people": [
+    {
+      "name": "Charity Helms",
+      "accounts": [
+        { "login": "helms-charity", "host": "github.com" },
+        { "login": "chelms_adobe", "host": "enterprise" }
+      ]
+    },
+    {
+      "name": "Teammate Example",
+      "accounts": [{ "login": "teammate1", "host": "github.com" }]
+    }
+  ]
 }
 ```
 
-The team index will use these names in the summary table.
+- `host` is `"github.com"` or `"enterprise"`. For Enterprise accounts, set **`GITHUB_API_URL`** and **`GITHUB_ENTERPRISE_TOKEN`** (same URL for all Enterprise logins).
+
+The team index maps each **login** to the person’s **name** for the summary table.
+
+### Discover repos from recent events (optional)
+
+```bash
+export GITHUB_TOKEN=...
+export GITHUB_API_URL=https://your-enterprise.github.com/api/v3   # if needed
+export GITHUB_ENTERPRISE_TOKEN=...                                  # Enterprise logins
+python list_repos_from_user_events.py --days 7 -o temp_repositories_from_events.txt
+```
+
+Writes unique `owner/repo` lines from **`PullRequestEvent`** and **`IssuesEvent`** only to `temp_repositories_from_events.txt` by default.
+
+### Multi-repo reports + JSON ledger (optional)
+
+`generate_user_activity_reports.py` generates one HTML report per **(login, repository)** for all accounts in `user_names.json`, writes a JSON **ledger** per login under `reports/user_activity/`, and refreshes `reports/index.html`.
+
+**Recommended (no PAT per user): `--repos-from-events`**
+
+Uses the same **public events** feed as `list_repos_from_user_events.py` (`GET /users/{login}/events/public`), keeping only **`PullRequestEvent`** and **`IssuesEvent`**. Your **`GITHUB_TOKEN`** is only for **rate limits** on that endpoint; it does not need to belong to each teammate. Ledger `token_source` is `public_events`. **No `repos_allowlist.json` required.**
+
+```bash
+export GITHUB_TOKEN=...
+export GITHUB_API_URL=https://api.github.com  # Enterprise accounts in user_names.json
+export GITHUB_ENTERPRISE_TOKEN=...
+
+python generate_user_activity_reports.py --from-user-names --repos-from-events \
+  --days 7 --startdate 2026-03-23
+```
+
+**Alternate discovery (model C) without `--repos-from-events`:**
+
+- **`GET /user/repos`** with your token (lists **your** repos, not each user’s — use only if that matches what you want, or use `--tokens-file` for per-login PATs).
+- **Allowlist:** `repos_allowlist.json` (see `repos_allowlist.example.json`) with `repos` and optional `orgs`.
+- **Both:** default **intersection**; `--union-allowlist` for union.
+
+**Environment (security: do not commit secrets):**
+
+| Variable | Use |
+|----------|-----|
+| `GITHUB_TOKEN` | github.com: events + reports; higher rate limit for public API |
+| `GITHUB_ENTERPRISE_TOKEN` | Enterprise `host` accounts |
+| `GITHUB_API_URL` | Same base URL for every Enterprise API call (e.g. `https://github.company.com/api/v3`) |
+
+**Per-login PATs (optional):** `--tokens-file path.json` only if you use **`GET /user/repos`** and want a different token per login.
+
+**Safety / rate limits:** `--max-repos N`, `--sleep-seconds` (default 2), `--rate-limit-min` (pause when core remaining is low). `--org` applies only to the API repo list (not to `--repos-from-events`).
+
+**Example (allowlist + API, no events):**
+
+```bash
+export GITHUB_TOKEN=...
+export GITHUB_API_URL=https://github.example.com/api/v3
+export GITHUB_ENTERPRISE_TOKEN=...
+
+python generate_user_activity_reports.py --from-user-names \
+  --repos-config repos_allowlist.json \
+  --days 7 --startdate 2026-03-23 \
+  --users helms-charity,roperev
+```
+
+**Outputs:**
+
+- `reports/team/{login}-{owner}-{repo}-{YYYY-MM-DD}.html`
+- `reports/user_activity/{login}-{YYYYMMDD}.json` (see `user_activity_ledger.example.json`)
+- Runs `generate_team_index.py` unless `--no-index` is set.
 
 ## Command-Line Options
 
@@ -441,13 +518,19 @@ jobs:
 ```
 reporting-git/
 ├── github_repo_user_report.py     # Main report generator
+├── generate_user_activity_reports.py  # Multi-repo orchestration + JSON ledger
 ├── generate_team_index.py         # Team index generator
-├── user_names.json                # Username to real name mapping
+├── user_events_repos.py           # Shared public-events repo discovery
+├── list_repos_from_user_events.py # Repo list from events (scratch file)
+├── user_names.json                # People + accounts (github.com / enterprise)
+├── repos_allowlist.example.json   # Example allowlist for orchestrator
+├── user_activity_ledger.example.json
 ├── requirements.txt               # Python dependencies
 ├── README.md                      # Complete documentation (this file)
 ├── START_HERE.md                  # Quick start guide (start here!)
 ├── reports/
 │   ├── index.html                 # Team dashboard (generated)
+│   ├── user_activity/             # JSON ledgers (generated)
 │   └── team/
 │       ├── user1-repo-date.html   # Individual reports
 │       ├── user2-repo-date.html

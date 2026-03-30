@@ -11,15 +11,15 @@
 set -e  # Exit on error
 
 REPO_OWNER="aemdemos"
-REPO_NAME="poc-st"
+REPO_NAME="summit-wmt"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="304"
+PAGES_MIGRATED="1"
 
 # Array of usernames to generate reports for
 USERS=(
     "sthirumal"
-    "roperev"
+    "bunting-adbe"
 )
 
 # Ensure output directory exists

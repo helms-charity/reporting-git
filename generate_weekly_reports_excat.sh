@@ -10,15 +10,15 @@
 # Optional: also set GITHUB_TOKEN for github.com repos (other scripts use it).
 
 set -e  # Exit on error
-# https://github.com/Adobe-AEM-Foundation/aem-excat-plugin
+# https://github.com/Adobe-AEM-Foundation/aem-experience-catalyst
 # is:pr is:merged merged:2026-03-09..2026-03-16 author:dfink_adobe  (1 = meet)
 # is:issue created:2026-03-09..2026-03-16 author:meejain_adobe (astha = 2)
 # is:issue closed:2026-03-09..2026-03-16 author:meejain_adobe
 REPO_OWNER="Adobe-AEM-Foundation"
-REPO_NAME="aem-exact-plugin"
+REPO_NAME="aem-experience-catalyst"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED=""
+PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(
@@ -33,7 +33,7 @@ mkdir -p "$OUTPUT_DIR"
 # Check for Enterprise API URL and token (this repo is on GitHub Enterprise)
 if [ -z "$GITHUB_API_URL" ] || [ -z "$GITHUB_ENTERPRISE_TOKEN" ]; then
     echo "⚠️  WARNING: This script needs GitHub Enterprise credentials."
-    echo "   export GITHUB_API_URL=\"https://your-enterprise-host/api/v3\""
+    echo "   export GITHUB_API_URL=\"https://api.github.com\""
     echo "   export GITHUB_ENTERPRISE_TOKEN=\"your_enterprise_token\""
     echo ""
 fi

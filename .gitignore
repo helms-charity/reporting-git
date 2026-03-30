@@ -36,3 +36,6 @@ wheels/
 .env.local
 config.sh
 
+# Scratch output from list_repos_from_user_events.py
+temp_repositories_from_events.txt
+

@@ -11,15 +11,15 @@
 set -e  # Exit on error
 
 REPO_OWNER="aemdemos"
-REPO_NAME="poc-tm"
+REPO_NAME="summit-nrg"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="8"
+PAGES_MIGRATED="1"
 
 # Array of usernames to generate reports for
 USERS=(
     "tmorris-adobe"
-    "zhummerz"
+    "roperev"
 )
 
 # Ensure output directory exists

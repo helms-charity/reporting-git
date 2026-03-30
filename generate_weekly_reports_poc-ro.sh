@@ -11,15 +11,15 @@
 set -e  # Exit on error
 
 REPO_OWNER="aemdemos"
-REPO_NAME="poc-ro"
+REPO_NAME="summit-usb"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="0"
+PAGES_MIGRATED="1"
 
 # Array of usernames to generate reports for
 USERS=(
     "techmaven"
-    "bunting-adbe"
+    "zhummerz"
 )
 
 # Ensure output directory exists
