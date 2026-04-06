@@ -100,8 +100,27 @@ def fetch_events_for_user(
     return events
 
 
+def _repo_full_name_from_event_repo(repo: Dict[str, Any]) -> Optional[str]:
+    """
+    Events use repo.url (https://api.github.com/repos/owner/name) or name.
+    `name` is sometimes only the short repo name; prefer URL so Search/repo APIs match.
+    """
+    url = (repo.get("url") or "").strip()
+    prefix = "/repos/"
+    if url and prefix in url:
+        tail = url.split(prefix, 1)[1].rstrip("/")
+        if tail and "/" in tail:
+            return tail
+    name = (repo.get("name") or "").strip()
+    if not name:
+        return None
+    if "/" in name:
+        return name
+    return None
+
+
 def collect_repos_from_events(events: List[Dict[str, Any]]) -> Tuple[Set[str], Dict[str, int]]:
-    """Return (repo full names, per-type counts) for INCLUDED_EVENT_TYPES only."""
+    """Return (repo full names owner/repo, per-type counts) for INCLUDED_EVENT_TYPES only."""
     repos: Set[str] = set()
     type_counts: Dict[str, int] = {}
     for ev in events:
@@ -110,7 +129,7 @@ def collect_repos_from_events(events: List[Dict[str, Any]]) -> Tuple[Set[str], D
             continue
         type_counts[et] = type_counts.get(et, 0) + 1
         repo = ev.get("repo") or {}
-        name = repo.get("name")
-        if name:
-            repos.add(name)
+        full = _repo_full_name_from_event_repo(repo)
+        if full:
+            repos.add(full)
     return repos, type_counts

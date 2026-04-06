@@ -8,7 +8,7 @@ This is more accurate than the Events API for tracking work on specific projects
 
 import requests
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 from typing import Dict, List, Optional
 import argparse
@@ -64,41 +64,173 @@ class GitHubRepoUserAnalyzer:
         else:
             return "xxl"
     
-    def fetch_user_prs(self, since_date: datetime) -> List[Dict]:
-        """Fetch PRs created by the user in the repo"""
-        print(f"Fetching PRs by @{self.username} in {self.owner}/{self.repo}...")
-        
-        # Use GitHub Search API for better filtering
-        query = f"repo:{self.owner}/{self.repo} is:pr author:{self.username} created:>={since_date.strftime('%Y-%m-%d')}"
+    def _search_issues_paginated(
+        self,
+        query: str,
+        max_pages: int = 10,
+        *,
+        sort: str = "created",
+        order: str = "desc",
+    ) -> List[Dict]:
+        """GitHub Search API (issues/PRs); follows pages up to max_pages × 100 results."""
         url = f"{self.base_url}/search/issues"
-        params = {
-            "q": query,
-            "sort": "created",
-            "order": "desc",
-            "per_page": 100
-        }
-        
-        response = requests.get(url, headers=self.headers, params=params)
-        
-        if response.status_code != 200:
-            print(f"Error fetching PRs: {response.status_code} - {response.text}")
-            return []
-        
-        data = response.json()
-        prs = data.get("items", [])
-        
-        print(f"Found {len(prs)} PRs")
-        
-        # Get detailed info for each PR
-        detailed_prs = []
-        for pr_summary in prs:
+        all_items: List[Dict] = []
+        for page in range(1, max_pages + 1):
+            params = {
+                "q": query,
+                "sort": sort,
+                "order": order,
+                "per_page": 100,
+                "page": page,
+            }
+            response = requests.get(url, headers=self.headers, params=params)
+            if response.status_code != 200:
+                print(f"Error searching issues: {response.status_code} - {response.text[:500]}")
+                break
+            data = response.json()
+            batch = data.get("items", [])
+            if not batch:
+                break
+            all_items.extend(batch)
+            if len(batch) < 100:
+                break
+        return all_items
+
+    @staticmethod
+    def _merged_at_calendar_day_utc(merged_at: Optional[str]) -> Optional[str]:
+        """YYYY-MM-DD in UTC for merged_at (API returns Zulu)."""
+        if not merged_at:
+            return None
+        try:
+            s = merged_at.replace("Z", "+00:00") if merged_at.endswith("Z") else merged_at
+            dt = datetime.fromisoformat(s)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.astimezone(timezone.utc).strftime("%Y-%m-%d")
+        except (ValueError, TypeError):
+            return merged_at[:10] if len(merged_at) >= 10 else None
+
+    def _search_merged_prs_in_window(self, since_s: str, end_s: str) -> List[Dict]:
+        """
+        Search for merged PRs in this repo — **without** `author:` (Search + author
+        + merged often returns nothing). Tries date-qualified queries first, then
+        a broad `is:merged` search (filtered by merged_at in fetch_user_prs).
+        """
+        repo_scope = f"repo:{self.owner}/{self.repo}"
+        queries = [
+            f"{repo_scope} is:pr is:merged merged:{since_s}..{end_s}",
+            f"{repo_scope} is:pr is:merged merged:>={since_s} merged:<={end_s}",
+        ]
+        for q in queries:
+            items = self._search_issues_paginated(q)
+            if items:
+                return items
+        # Some orgs/repos return 0 for merged:… qualifiers; fall back to recent merged PRs
+        return self._search_issues_paginated(
+            f"{repo_scope} is:pr is:merged",
+            max_pages=10,
+            sort="updated",
+            order="desc",
+        )
+
+    def _list_closed_pulls_paginated(self, max_pages: int = 100) -> List[Dict]:
+        """GET /repos/{owner}/{repo}/pulls state=closed (fallback when Search is empty)."""
+        out: List[Dict] = []
+        for page in range(1, max_pages + 1):
+            r = requests.get(
+                f"{self.base_url}/repos/{self.owner}/{self.repo}/pulls",
+                headers=self.headers,
+                params={
+                    "state": "closed",
+                    "per_page": 100,
+                    "page": page,
+                    "sort": "updated",
+                    "direction": "desc",
+                },
+                timeout=60,
+            )
+            if r.status_code != 200:
+                print(f"  List pulls error: {r.status_code} - {r.text[:300]}")
+                break
+            batch = r.json()
+            if not batch:
+                break
+            out.extend(batch)
+            if len(batch) < 100:
+                break
+        return out
+
+    def fetch_user_prs(self, since_date: datetime, end_date: datetime) -> List[Dict]:
+        """
+        Fetch PRs *merged* in [since_date, end_date] (UTC merge date) where the
+        PR *author* (user who opened the PR) is this username.
+
+        Search does **not** use `author:` — that qualifier is applied after loading
+        each pull (GitHub Search + author + merged range often returns no rows).
+        """
+        print(f"Fetching PRs merged by @{self.username} in {self.owner}/{self.repo}...")
+        since_s = since_date.strftime("%Y-%m-%d")
+        end_s = end_date.strftime("%Y-%m-%d")
+
+        summaries = self._search_merged_prs_in_window(since_s, end_s)
+        source = "search"
+        if not summaries:
+            print("  Search returned 0 PR(s); falling back to listing closed pull requests…")
+            raw_pulls = self._list_closed_pulls_paginated()
+            source = "list_pulls"
+            # Pre-filter list response (has merged_at, user) — avoids N GETs for unrelated PRs
+            summaries = []
+            seen_nums = set()
+            for pr in raw_pulls:
+                n = pr.get("number")
+                if n is None or n in seen_nums:
+                    continue
+                merged_at = pr.get("merged_at")
+                day = self._merged_at_calendar_day_utc(merged_at)
+                if not day or not (since_s <= day <= end_s):
+                    continue
+                if (pr.get("user") or {}).get("login", "").lower() != self.username.lower():
+                    continue
+                seen_nums.add(n)
+                summaries.append({"number": n})
+        else:
+            seen_nums = set()
+            deduped: List[Dict] = []
+            for item in summaries:
+                n = item.get("number")
+                if n is not None and n not in seen_nums:
+                    seen_nums.add(n)
+                    deduped.append(item)
+            summaries = deduped
+
+        print(f"  Candidates from {source}: {len(summaries)} PR(s)")
+
+        detailed_prs: List[Dict] = []
+        for pr_summary in summaries:
             pr_number = pr_summary["number"]
+            # Search issue objects include user + closed_at — skip non-matches before GET
+            u = (pr_summary.get("user") or {}).get("login", "")
+            if u and u.lower() != self.username.lower():
+                continue
+            ca = pr_summary.get("closed_at")
+            if ca:
+                cday = ca[:10]
+                if not (since_s <= cday <= end_s):
+                    continue
             pr_url = f"{self.base_url}/repos/{self.owner}/{self.repo}/pulls/{pr_number}"
-            pr_response = requests.get(pr_url, headers=self.headers)
-            
-            if pr_response.status_code == 200:
-                detailed_prs.append(pr_response.json())
-        
+            pr_response = requests.get(pr_url, headers=self.headers, timeout=60)
+            if pr_response.status_code != 200:
+                continue
+            pr = pr_response.json()
+            merged_at = pr.get("merged_at")
+            day = self._merged_at_calendar_day_utc(merged_at)
+            if not day or not (since_s <= day <= end_s):
+                continue
+            if (pr.get("user") or {}).get("login", "").lower() != self.username.lower():
+                continue
+            detailed_prs.append(pr)
+
+        print(f"  After merged_at + author filter: {len(detailed_prs)} PR(s)")
         return detailed_prs
     
     def fetch_user_closed_issues(self, since_date: datetime) -> List[Dict]:
@@ -299,15 +431,15 @@ class GitHubRepoUserAnalyzer:
         self.end_date = end_date
         self.since_date = since_date
         
-        # Fetch PRs
-        prs = self.fetch_user_prs(since_date)
+        # Fetch PRs merged in [since_date, end_date] only (see fetch_user_prs)
+        prs = self.fetch_user_prs(since_date, self.end_date)
         total_commits_in_prs = 0
         for pr in prs:
             additions = pr.get("additions", 0)
             deletions = pr.get("deletions", 0)
             total_changes = additions + deletions
             pr_size = self._get_pr_size(total_changes)
-            
+
             pr_data = {
                 "number": pr["number"],
                 "title": pr["title"],
@@ -324,18 +456,10 @@ class GitHubRepoUserAnalyzer:
                 "changed_files": pr.get("changed_files", 0),
                 "commits": pr.get("commits", 0),
             }
-            
-            self.stats["pull_requests_opened"].append(pr_data)
+
+            self.stats["pull_requests_merged"].append(pr_data)
             total_commits_in_prs += pr_data["commits"]
-            
-            # Track PR size distribution
             self.stats["pr_sizes"][pr_size] += 1
-            
-            if pr.get("merged_at"):
-                self.stats["pull_requests_merged"].append(pr_data)
-            elif pr["state"] == "closed":
-                self.stats["pull_requests_closed"].append(pr_data)
-            
             self.stats["total_additions"] += additions
             self.stats["total_deletions"] += deletions
             self.stats["total_files_changed"] += pr_data["changed_files"]
@@ -446,7 +570,6 @@ class GitHubRepoUserAnalyzer:
         # Summary Statistics
         report.append("📊 SUMMARY STATISTICS")
         report.append("-" * 80)
-        total_prs = len(self.stats['pull_requests_opened'])
         total_merged = len(self.stats['pull_requests_merged'])
         report.append(f"Pull Requests Merged:     {total_merged}")
         report.append(f"Reviews Given:            {self.stats.get('total_reviews_given', len(self.stats['pull_requests_reviewed']))}")
@@ -474,19 +597,19 @@ class GitHubRepoUserAnalyzer:
         report.append(f"XXL (≥ 1000 changes):     {self.stats['pr_sizes']['xxl']}")
         report.append("")
         
-        # Pull Requests Opened
-        if self.stats["pull_requests_opened"]:
-            report.append(f"🔀 PULL REQUESTS OPENED ({len(self.stats['pull_requests_opened'])})")
+        # Pull Requests Merged (detail)
+        if self.stats["pull_requests_merged"]:
+            report.append(f"✅ PULL REQUESTS MERGED ({len(self.stats['pull_requests_merged'])})")
             report.append("-" * 80)
-            for pr in self.stats["pull_requests_opened"]:
-                status = "✅ Merged" if pr.get("merged_at") else ("❌ Closed" if pr["state"] == "closed" else "🔄 Open")
-                size = pr.get('size', 'm').upper()
-                report.append(f"  {status} [{size}] #{pr['number']}: {pr['title']}")
+            for pr in self.stats["pull_requests_merged"]:
+                size = pr.get("size", "m").upper()
+                report.append(f"  [{size}] #{pr['number']}: {pr['title']}")
                 report.append(f"    URL: {pr['url']}")
-                report.append(f"    Stats: +{pr['additions']} -{pr['deletions']} lines "
-                            f"({pr.get('total_changes', pr['additions'] + pr['deletions'])} total changes), "
-                            f"{pr['changed_files']} files, {pr['commits']} commits")
-                report.append(f"    Created: {pr['created_at']}")
+                report.append(
+                    f"    Stats: +{pr['additions']} -{pr['deletions']} lines "
+                    f"({pr.get('total_changes', pr['additions'] + pr['deletions'])} total changes), "
+                    f"{pr['changed_files']} files, {pr['commits']} commits"
+                )
                 if pr.get("merged_at"):
                     report.append(f"    Merged: {pr['merged_at']}")
                 report.append("")
@@ -547,7 +670,6 @@ class GitHubRepoUserAnalyzer:
     
     def _generate_html_report(self, days: int, pages_migrated: int = 0) -> str:
         """Generate HTML report with modern styling"""
-        total_prs = len(self.stats['pull_requests_opened'])
         total_merged = len(self.stats['pull_requests_merged'])
         total_reviews = self.stats.get('total_reviews_given', len(self.stats['pull_requests_reviewed']))
         unique_prs_reviewed = self.stats.get('unique_prs_reviewed', len(set(r['pr_number'] for r in self.stats['pull_requests_reviewed'])))
@@ -907,7 +1029,7 @@ class GitHubRepoUserAnalyzer:
                 Pull Request Size Distribution
             </h2>
             <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
-                <em>Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+                <em>Counts merged PRs in the period only. Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
             </p>
             <div class="pr-size-chart">
                 <div class="size-card">
@@ -986,40 +1108,39 @@ class GitHubRepoUserAnalyzer:
         </div>
 """
         
-        # Pull Requests Section
-        if self.stats["pull_requests_opened"]:
+        # Pull Requests Merged Section
+        if self.stats["pull_requests_merged"]:
             html += f"""
         <div class="section">
             <h2 class="section-title">
-                <span>🔀</span>
-                Pull Requests Opened ({len(self.stats['pull_requests_opened'])})
+                <span>✅</span>
+                Pull Requests Merged ({len(self.stats['pull_requests_merged'])})
             </h2>
 """
-            for pr in self.stats["pull_requests_opened"]:
-                if pr.get("merged_at"):
-                    status_badge = '<span class="badge badge-merged">✅ Merged</span>'
-                elif pr["state"] == "closed":
-                    status_badge = '<span class="badge badge-closed">❌ Closed</span>'
-                else:
-                    status_badge = '<span class="badge badge-open">🔄 Open</span>'
-                
-                # Add size badge
-                pr_size = pr.get('size', 'm').upper()
+            for pr in self.stats["pull_requests_merged"]:
+                pr_size = pr.get("size", "m").upper()
                 size_badge_class = f"badge-{pr.get('size', 'm')}"
                 size_badge = f'<span class="badge {size_badge_class} badge-size">{pr_size}</span>'
-                
-                pr_date = datetime.strptime(pr['created_at'], "%Y-%m-%dT%H:%M:%SZ").strftime('%B %d, %Y')
-                
+                merged_raw = pr.get("merged_at") or ""
+                if merged_raw:
+                    try:
+                        mt = merged_raw.replace("Z", "+00:00") if merged_raw.endswith("Z") else merged_raw
+                        merge_label = datetime.fromisoformat(mt).strftime("%B %d, %Y")
+                    except ValueError:
+                        merge_label = merged_raw[:10]
+                else:
+                    merge_label = "—"
+
                 html += f"""
             <div class="pr-card">
                 <div class="pr-title">
                     <span class="pr-number">#{pr['number']}</span>
                     <a href="{pr['url']}" class="pr-link" target="_blank">{pr['title']}</a>
-                    {status_badge}
+                    <span class="badge badge-merged">✅ Merged</span>
                     {size_badge}
                 </div>
                 <div class="pr-stats">
-                    <div class="pr-stat">📅 {pr_date}</div>
+                    <div class="pr-stat">📅 Merged {merge_label}</div>
                     <div class="pr-stat">
                         <span class="stat-additions">+{pr['additions']}</span>
                     </div>

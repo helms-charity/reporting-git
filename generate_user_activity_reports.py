@@ -18,7 +18,7 @@ import re
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -279,11 +279,15 @@ def run_report_subprocess(
     repo: str,
     username: str,
     days: int,
-    startdate: str,
+    report_end_date: Optional[str],
     out_html: Path,
     token: Optional[str],
     api_url: Optional[str],
-) -> Tuple[int, str]:
+) -> Tuple[int, str, str]:
+    """
+    Run github_repo_user_report.py. If report_end_date is None, do not pass --startdate
+    (matches generate_weekly_reports_*.sh: end of window is datetime.now() in the report tool).
+    """
     cmd = [
         sys.executable,
         str(ROOT / "github_repo_user_report.py"),
@@ -292,8 +296,6 @@ def run_report_subprocess(
         username,
         "--days",
         str(days),
-        "--startdate",
-        startdate,
         "--format",
         "html",
         "--pages-migrated",
@@ -301,6 +303,8 @@ def run_report_subprocess(
         "--output",
         str(out_html),
     ]
+    if report_end_date:
+        cmd.extend(["--startdate", report_end_date])
     if token:
         cmd.extend(["--token", token])
     if api_url:
@@ -313,7 +317,8 @@ def run_report_subprocess(
         timeout=600,
     )
     err = (proc.stderr or "") + ("\n" + proc.stdout if proc.returncode != 0 else "")
-    return proc.returncode, err[-2000:] if err else ""
+    stderr_tail = (proc.stderr or "")[-4000:]
+    return proc.returncode, err[-2000:] if err else "", stderr_tail
 
 
 def parse_accounts_arg(users_csv: Optional[str]) -> Optional[Set[str]]:
@@ -359,7 +364,10 @@ def main() -> None:
     parser.add_argument(
         "--startdate",
         type=str,
-        help="End date YYYY-MM-DD (default: today UTC)",
+        default=None,
+        help="End date YYYY-MM-DD for the repo report window. If omitted, matches weekly scripts: "
+        "github_repo_user_report uses 'now' as the window end (do not pass --startdate). "
+        "Ledger filenames still use today UTC when this is omitted.",
     )
     parser.add_argument(
         "--org",
@@ -398,8 +406,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    startdate = args.startdate or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    date_compact = startdate.replace("-", "")
+    ledger_date = args.startdate or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    report_end_date = args.startdate
+    date_compact = ledger_date.replace("-", "")
     exclude_forks = not args.include_forks
     exclude_archived = not args.include_archived
     tokens_map = load_tokens_file(args.tokens_file) if args.tokens_file else {}
@@ -453,7 +462,10 @@ def main() -> None:
                     f"  [{login}] WARNING: GITHUB_TOKEN not set — public events limited to 60 req/hr",
                     file=sys.stderr,
                 )
-            cutoff = cutoff_for_report_window(startdate, args.days)
+            if args.startdate:
+                cutoff = cutoff_for_report_window(args.startdate, args.days)
+            else:
+                cutoff = datetime.now(timezone.utc) - timedelta(days=args.days)
             events = fetch_events_for_user(login, api_base, token, cutoff)
             final_set, _ = collect_repos_from_events(events)
             token_source = "public_events"
@@ -551,7 +563,7 @@ def main() -> None:
         ledger: Dict[str, Any] = {
             "schema_version": SCHEMA_VERSION,
             "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "date": startdate,
+            "date": ledger_date,
             "username": login,
             "host": host,
             "token_source": token_source,
@@ -575,7 +587,7 @@ def main() -> None:
             owner, repo_name = parts[0], parts[1]
             owner_seg = _sanitize_filename_segment(owner)
             repo_seg = _sanitize_filename_segment(repo_name)
-            out_name = f"{login}-{owner_seg}-{repo_seg}-{startdate}.html"
+            out_name = f"{login}-{owner_seg}-{repo_seg}-{ledger_date}.html"
             out_html = team_dir / out_name
 
             rem = get_rate_limit_remaining(token, api_base)
@@ -583,12 +595,12 @@ def main() -> None:
                 print(f"Rate limit low ({rem}); sleeping 60s...")
                 time.sleep(60)
 
-            code, err = run_report_subprocess(
+            code, err, stderr_tail = run_report_subprocess(
                 owner,
                 repo_name,
                 login,
                 args.days,
-                startdate,
+                report_end_date,
                 out_html,
                 token,
                 api_url,
@@ -597,14 +609,15 @@ def main() -> None:
             rel_path = str(out_html.relative_to(ROOT))
             if code == 0:
                 ledger["summary"]["ok"] += 1
-                ledger["runs"].append(
-                    {
-                        "full_name": item,
-                        "status": "ok",
-                        "html_path": rel_path,
-                        "rate_limit_remaining": rem_after,
-                    }
-                )
+                run_entry: Dict[str, Any] = {
+                    "full_name": item,
+                    "status": "ok",
+                    "html_path": rel_path,
+                    "rate_limit_remaining": rem_after,
+                }
+                if stderr_tail.strip():
+                    run_entry["report_stderr_tail"] = stderr_tail.strip()
+                ledger["runs"].append(run_entry)
             else:
                 ledger["summary"]["error"] += 1
                 ledger["runs"].append(
@@ -613,6 +626,7 @@ def main() -> None:
                         "status": "error",
                         "error": err[:500],
                         "rate_limit_remaining": rem_after,
+                        "report_stderr_tail": stderr_tail.strip() if stderr_tail.strip() else None,
                     }
                 )
             write_ledger(ledger_path, ledger)

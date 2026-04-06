@@ -10,17 +10,15 @@
 
 set -e  # Exit on error
 
-REPO_OWNER="aemdemos"
-REPO_NAME="summit-boe"
+REPO_OWNER="meejain"
+REPO_NAME="xmod-azit"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="1"
+PAGES_MIGRATED="180"
 
 # Array of usernames to generate reports for
 USERS=(
-    "amarghioali"
-    "inasplayground"
-    "iustinp"
+    "meejain"
 )
 
 # Ensure output directory exists
@@ -67,8 +65,6 @@ for user in "${USERS[@]}"; do
     sleep 2
 done
 
-echo "✅ All reports completed!"
-
 echo ""
 echo "---"
 echo "📋 Generating team index..."
@@ -76,6 +72,6 @@ python generate_team_index.py
 echo "✓ Team index: reports/index.html"
 
 echo ""
-echo "✅ Done! Generated ${#USERS[@]} reports in parallel."
+echo "✅ Done! Generated ${#USERS[@]} reports."
 echo "View the team index at: file://$(pwd)/reports/index.html"
 
