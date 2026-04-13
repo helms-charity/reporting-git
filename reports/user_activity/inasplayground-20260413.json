@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-04-13T14:21:48Z",
+  "date": "2026-04-13",
+  "username": "inasplayground",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/summit-gen",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/summit-rob",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/summit-gen",
+      "status": "ok",
+      "html_path": "reports/team/inasplayground-aemdemos-summit-gen-2026-04-13.html",
+      "rate_limit_remaining": 4952
+    },
+    {
+      "full_name": "aemdemos/summit-rob",
+      "status": "ok",
+      "html_path": "reports/team/inasplayground-aemdemos-summit-rob-2026-04-13.html",
+      "rate_limit_remaining": 4951
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 0
+  }
+}

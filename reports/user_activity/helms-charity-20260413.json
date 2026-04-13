@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-04-13T14:21:32Z",
+  "date": "2026-04-13",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/summit-boe",
+      "source": "public_events"
+    },
+    {
+      "full_name": "cloudadoption/nycmasterclass",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-ise-boilerplate-2026-04-13.html",
+      "rate_limit_remaining": 4970
+    },
+    {
+      "full_name": "aemdemos/summit-boe",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-summit-boe-2026-04-13.html",
+      "rate_limit_remaining": 4962
+    },
+    {
+      "full_name": "cloudadoption/nycmasterclass",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-cloudadoption-nycmasterclass-2026-04-13.html",
+      "rate_limit_remaining": 4961
+    }
+  ],
+  "summary": {
+    "ok": 3,
+    "error": 0,
+    "skipped": 0
+  }
+}

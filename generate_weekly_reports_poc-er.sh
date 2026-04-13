@@ -14,7 +14,7 @@ REPO_OWNER="aemdemos"
 REPO_NAME="summit-vzn"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="1"
+PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(

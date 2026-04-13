@@ -8,6 +8,18 @@ RULES
 **Get your first report in 5 minutes!**
 
 Track GitHub activity within specific repositories: PRs merged, code reviews, issues, commits, and more. Perfect for sprint reports and team dashboards.
+- Move last week's files into a new folder with date
+- If there are pages migrated, add those to the weekly reports.sh scripts first
+- then run ./generate_user_activity_reports.sh to see what people worked on in public github.com repos
+- Next run individual weekly reports.sh per known private repos on github.com (such as IDFC).
+- delete any individual reports that are all 0's, and delete any that are non-related repos.
+- Go to each person's enterprise git profile to see if they worked on something in the past week
+https://github.com/meejain_adobe?tab=overview&from=2026-04-06&to=2026-04-13
+https://github.com/dfink_adobe?tab=overview&from=2026-04-06&to=2026-04-13
+https://github.com/asthabharga_adobe?tab=overview&from=2026-04-06&to=2026-04-13
+
+- then run individual weekly reports.sh on the repos they have had activity in.
+- If any show all 0's due to permissions, then check my fine-grained token if I've added that repo. I may have to add their PR numbers manually to the report if all else fails.
 
 ## ⚡ Quick Setup (3 Steps)
 

@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @tmorris-adobe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">aemdemos/summit-hpp</div>
+            <div class="username">@tmorris-adobe</div>
+            <div class="meta">
+                📅 Period: April 06, 2026 to April 13, 2026 (7 days) | 
+                🕐 Generated: April 13, 2026 at 10:22:55
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">16</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+2306</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-868</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📄 Pg Migrated (group)</div>
+                <div class="metric-value">0</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Counts merged PRs in the period only. Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">1</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">4</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">5</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">5</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">0</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">1</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">0</div>
+                <div class="size-description">0 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">24</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">14</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">0</div>
+                <div class="size-description">0 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Pull Requests Merged (16)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#70</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/70" class="pr-link" target="_blank">fix: Desktop parity R2 — white strip, padding, news cards, Miami badge</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 08, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+98</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-23</span>
+                    </div>
+                    <div class="pr-stat">📊 121 total changes</div>
+                    <div class="pr-stat">📄 6 files</div>
+                    <div class="pr-stat">💾 4 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#65</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/65" class="pr-link" target="_blank">fix: Desktop 1920px parity — header, hero, news carousel sizing</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+15</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-15</span>
+                    </div>
+                    <div class="pr-stat">📊 30 total changes</div>
+                    <div class="pr-stat">📄 4 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#64</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/64" class="pr-link" target="_blank">fix: Hero carousel slide indicator dots</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+53</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-1</span>
+                    </div>
+                    <div class="pr-stat">📊 54 total changes</div>
+                    <div class="pr-stat">📄 2 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#63</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/63" class="pr-link" target="_blank">fix: Product cards — image zoom and card lift on hover</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xs badge-size">XS</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+7</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-1</span>
+                    </div>
+                    <div class="pr-stat">📊 8 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#62</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/62" class="pr-link" target="_blank">fix: Customer stories — 3-column grid layout for tab panels</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+6</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-8</span>
+                    </div>
+                    <div class="pr-stat">📊 14 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#61</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/61" class="pr-link" target="_blank">fix: GreenLake promo — two-column layout and pill CTA button</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+34</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-7</span>
+                    </div>
+                    <div class="pr-stat">📊 41 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#60</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/60" class="pr-link" target="_blank">fix: Solutions grid — image zoom hover and CTA arrow icons</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+24</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-4</span>
+                    </div>
+                    <div class="pr-stat">📊 28 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#59</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/59" class="pr-link" target="_blank">fix: Feature banner CTA — white pill button with arrow icon</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+39</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-6</span>
+                    </div>
+                    <div class="pr-stat">📊 45 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#58</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/58" class="pr-link" target="_blank">fix: News carousel — wider cards, working nav, control bar</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+58</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-76</span>
+                    </div>
+                    <div class="pr-stat">📊 134 total changes</div>
+                    <div class="pr-stat">📄 2 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#57</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/57" class="pr-link" target="_blank">fix: Header desktop nav — logo, centered links, chevrons, icons</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+80</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-19</span>
+                    </div>
+                    <div class="pr-stat">📊 99 total changes</div>
+                    <div class="pr-stat">📄 5 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#48</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/48" class="pr-link" target="_blank">fix: Hero carousel pixel-parity — fonts, layout, and crossfade</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+11</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-10</span>
+                    </div>
+                    <div class="pr-stat">📊 21 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#47</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/47" class="pr-link" target="_blank">fix: Hero carousel pixel-parity CSS rewrite (R1+R2+R3)</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 07, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+160</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-98</span>
+                    </div>
+                    <div class="pr-stat">📊 258 total changes</div>
+                    <div class="pr-stat">📄 3 files</div>
+                    <div class="pr-stat">💾 10 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#46</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/46" class="pr-link" target="_blank">fix: Phase A — Hero carousel structural rewrite</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 06, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+239</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-96</span>
+                    </div>
+                    <div class="pr-stat">📊 335 total changes</div>
+                    <div class="pr-stat">📄 2 files</div>
+                    <div class="pr-stat">💾 4 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#45</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/45" class="pr-link" target="_blank">fix: Hero carousel slides stacking instead of rotating</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-l badge-size">L</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 06, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+198</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-64</span>
+                    </div>
+                    <div class="pr-stat">📊 262 total changes</div>
+                    <div class="pr-stat">📄 2 files</div>
+                    <div class="pr-stat">💾 3 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#44</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/44" class="pr-link" target="_blank">feat: Full homepage content reconstruction with local images</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 06, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+1272</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-440</span>
+                    </div>
+                    <div class="pr-stat">📊 1712 total changes</div>
+                    <div class="pr-stat">📄 60 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#43</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/pull/43" class="pr-link" target="_blank">feat: EDS-structured homepage content for aem.page pipeline</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged April 06, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+12</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-0</span>
+                    </div>
+                    <div class="pr-stat">📊 12 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by tmorris-adobe (14)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#68</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/68" class="pr-link" target="_blank">fix: White strip visible between header and hero section — not present in original</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#69</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/69" class="pr-link" target="_blank">fix: Hero slide 2 (Inter Miami CF) missing club badge overlay on right side</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#67</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/67" class="pr-link" target="_blank">fix: News carousel cards styling does not match original — no card background, green CTA arrows, different layout</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#66</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/66" class="pr-link" target="_blank">fix: Hero content left padding must match original and stay consistent at all viewport widths</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 08, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#56</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/56" class="pr-link" target="_blank">fix: Hero carousel missing slide indicator dots</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#55</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/55" class="pr-link" target="_blank">fix: Product cards missing image zoom hover effect and arrow CTA styling</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#54</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/54" class="pr-link" target="_blank">fix: Customer stories tab panels need 3-column grid layout matching source</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#53</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/53" class="pr-link" target="_blank">fix: GreenLake promo section — video player and two-column layout refinement</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#52</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/52" class="pr-link" target="_blank">fix: Solutions grid cards missing hover animations and image overlay effects</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#51</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/51" class="pr-link" target="_blank">fix: Feature banner CTA should be a pill button with arrow, not plain link</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#50</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/50" class="pr-link" target="_blank">fix: News carousel cards need horizontal scroll and refined card styling</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#49</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/49" class="pr-link" target="_blank">fix: Header missing desktop navigation — only shows hamburger menu</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#27</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/27" class="pr-link" target="_blank">P0: Page title shows H1 content instead of 'Hewlett Packard Enterprise (HPE)'</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 06, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#24</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/24" class="pr-link" target="_blank">P0: Content renders as flat unstyled text on aem.page — no blocks decorated</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: April 06, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🐛</span>
+                Issues Opened (24)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#82</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/82" class="pr-link" target="_blank">[P2] Footer layout and styling differences</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#81</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/81" class="pr-link" target="_blank">[P1] HPE Services section — missing gradient accent, wrong CTA style</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#79</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/79" class="pr-link" target="_blank">[P0] Customer Stories section layout doesn't match original</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#80</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/80" class="pr-link" target="_blank">[P1] GreenLake Promo section layout and styling differences</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#78</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/78" class="pr-link" target="_blank">[P0] Product Cards — images missing, layout incorrect</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#77</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/77" class="pr-link" target="_blank">[P0] Card Carousel missing gradient edges, unwanted indicators, wrong sizing</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#76</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/76" class="pr-link" target="_blank">[P0] Solutions Grid section styling completely wrong</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#75</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/75" class="pr-link" target="_blank">[P0] Feature Banner section styling completely wrong</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#74</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/74" class="pr-link" target="_blank">[P0] Hero carousel nav buttons overlap above fixed navigation on scroll</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#72</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/72" class="pr-link" target="_blank">[P0] Navigation alignment and positioning wrong at all resolutions</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#73</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/73" class="pr-link" target="_blank">[P0] Hero carousel has unwanted slide indicator dots</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#71</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/71" class="pr-link" target="_blank">[P1] Global content max-width too narrow at ultrawide resolutions</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#68</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/68" class="pr-link" target="_blank">fix: White strip visible between header and hero section — not present in original</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 08, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#69</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/69" class="pr-link" target="_blank">fix: Hero slide 2 (Inter Miami CF) missing club badge overlay on right side</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 08, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#66</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/66" class="pr-link" target="_blank">fix: Hero content left padding must match original and stay consistent at all viewport widths</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 08, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#67</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/67" class="pr-link" target="_blank">fix: News carousel cards styling does not match original — no card background, green CTA arrows, different layout</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 08, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#56</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/56" class="pr-link" target="_blank">fix: Hero carousel missing slide indicator dots</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#55</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/55" class="pr-link" target="_blank">fix: Product cards missing image zoom hover effect and arrow CTA styling</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#54</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/54" class="pr-link" target="_blank">fix: Customer stories tab panels need 3-column grid layout matching source</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#53</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/53" class="pr-link" target="_blank">fix: GreenLake promo section — video player and two-column layout refinement</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#52</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/52" class="pr-link" target="_blank">fix: Solutions grid cards missing hover animations and image overlay effects</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#50</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/50" class="pr-link" target="_blank">fix: News carousel cards need horizontal scroll and refined card styling</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#51</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/51" class="pr-link" target="_blank">fix: Feature banner CTA should be a pill button with arrow, not plain link</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#49</span>
+                    <a href="https://github.com/aemdemos/summit-hpp/issues/49" class="pr-link" target="_blank">fix: Header missing desktop navigation — only shows hamburger menu</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 April 07, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

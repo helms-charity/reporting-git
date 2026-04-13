@@ -22,9 +22,7 @@ PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(
-    "dfink_adobe"
     "meejain_adobe"
-    "asthabharga_adobe"
 )
 
 # Ensure output directory exists

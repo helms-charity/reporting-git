@@ -10,18 +10,15 @@
 
 set -e  # Exit on error
 
-REPO_OWNER="aemdemos"
-REPO_NAME="audemarspiguet"
+REPO_OWNER="rusmeenkhan1"
+REPO_NAME="abbvie"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED=""
+PAGES_MIGRATED="50"
 
 # Array of usernames to generate reports for
 USERS=(
     "rusmeenkhan1"
-    "asthabh23"
-    "nehakaushik2025"
-    "shivanim123"
 )
 
 # Ensure output directory exists
