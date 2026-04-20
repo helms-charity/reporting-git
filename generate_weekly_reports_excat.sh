@@ -44,13 +44,16 @@ echo "Date: $DATE"
 echo "---"
 
 # Start all reports sequentially (to avoid rate limiting)
+REPORTS_OK=0
+REPORTS_SKIPPED=0
+
 for user in "${USERS[@]}"; do
     OUTPUT_FILE="${OUTPUT_DIR}/${user}-${REPO_NAME}-${DATE}.html"
     
     echo "Starting report for @${user}..."
     
     # Run sequentially (no & at end). Use Enterprise API URL and token when set.
-    CMD=(python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" --days 7 --format html --pages-migrated "${PAGES_MIGRATED:-0}" --output "$OUTPUT_FILE")
+    CMD=(python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" --days 7 --format html --pages-migrated "${PAGES_MIGRATED:-0}" --omit-if-empty --output "$OUTPUT_FILE")
     if [ -n "$GITHUB_API_URL" ]; then
         CMD+=(--api-url "$GITHUB_API_URL")
     fi
@@ -59,9 +62,20 @@ for user in "${USERS[@]}"; do
     elif [ -n "$GITHUB_TOKEN" ]; then
         CMD+=(--token "$GITHUB_TOKEN")
     fi
+    set +e
     "${CMD[@]}"
-    
-    echo "✓ Completed: @${user}"
+    rc=$?
+    set -e
+    if [ "$rc" -eq 0 ]; then
+        echo "✓ Completed: @${user}"
+        REPORTS_OK=$((REPORTS_OK + 1))
+    elif [ "$rc" -eq 2 ]; then
+        echo "○ Skipped @${user} (no measurable activity in window)"
+        REPORTS_SKIPPED=$((REPORTS_SKIPPED + 1))
+        rm -f "$OUTPUT_FILE"
+    else
+        exit "$rc"
+    fi
     
     # Small delay between users to be respectful to GitHub API
     sleep 2
@@ -74,6 +88,7 @@ python generate_team_index.py
 echo "✓ Team index: reports/index.html"
 
 echo ""
-echo "✅ Done! Generated ${#USERS[@]} reports."
+echo "✅ Done! Wrote ${REPORTS_OK} HTML report(s)."
+[ "${REPORTS_SKIPPED:-0}" -gt 0 ] && echo "   Skipped ${REPORTS_SKIPPED} user(s) (no measurable activity in window)."
 echo "View the team index at: file://$(pwd)/reports/index.html"
 
