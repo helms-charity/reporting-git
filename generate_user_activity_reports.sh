@@ -26,7 +26,22 @@ if [ -z "$GITHUB_TOKEN" ]; then
     exit 1
 fi
 
-# Default matches START_HERE; pass extra args after the script name, e.g. --days 14 --users meejain
+# Optional: fix the reporting window (see generate_user_activity_reports.py --help).
+#
+#   --startdate YYYY-MM-DD   = END date of the window (last day included), not the first day.
+#   --days N                 = length of the lookback (default 7).
+#
+# Example: 7 calendar days ending on 2026-04-10 (inclusive):
+#   ./generate_user_activity_reports.sh --startdate 2026-04-10 --days 7
+#
+# Omit --startdate: events cutoff and per-repo reports both use the current instant in UTC as
+# the window end (github_repo_user_report analyzes with end_date = now UTC).
+#
+# With --startdate: that YYYY-MM-DD is the last UTC calendar day of the window; the first day is
+# (--startdate minus --days), matching the public-events cutoff in generate_user_activity_reports.py.
+# Issue/PR Search qualifiers use the same UTC day bounds, so metric cards align with repo discovery.
+#
+# Pass more flags after the script name, e.g. --days 14 --users meejain --startdate 2026-04-10
 python generate_user_activity_reports.py \
     --from-user-names \
     --repos-from-events \

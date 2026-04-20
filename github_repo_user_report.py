@@ -6,12 +6,14 @@ Generates reports for a specific user's activity within a specific repository.
 This is more accurate than the Events API for tracking work on specific projects.
 """
 
-import requests
-import json
-from datetime import datetime, timedelta, timezone
-from collections import defaultdict
-from typing import Dict, List, Optional
 import argparse
+import json
+import sys
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from typing import Dict, List, Optional
+
+import requests
 
 
 class GitHubRepoUserAnalyzer:
@@ -110,6 +112,15 @@ class GitHubRepoUserAnalyzer:
         except (ValueError, TypeError):
             return merged_at[:10] if len(merged_at) >= 10 else None
 
+    @staticmethod
+    def _report_day_strings(since_date: datetime, end_date: datetime) -> tuple[str, str]:
+        """UTC calendar YYYY-MM-DD bounds for Search qualifiers (matches events cutoff + merge day)."""
+        s = since_date if since_date.tzinfo else since_date.replace(tzinfo=timezone.utc)
+        e = end_date if end_date.tzinfo else end_date.replace(tzinfo=timezone.utc)
+        s = s.astimezone(timezone.utc)
+        e = e.astimezone(timezone.utc)
+        return s.strftime("%Y-%m-%d"), e.strftime("%Y-%m-%d")
+
     def _search_merged_prs_in_window(self, since_s: str, end_s: str) -> List[Dict]:
         """
         Search for merged PRs in this repo — **without** `author:` (Search + author
@@ -169,8 +180,7 @@ class GitHubRepoUserAnalyzer:
         each pull (GitHub Search + author + merged range often returns no rows).
         """
         print(f"Fetching PRs merged by @{self.username} in {self.owner}/{self.repo}...")
-        since_s = since_date.strftime("%Y-%m-%d")
-        end_s = end_date.strftime("%Y-%m-%d")
+        since_s, end_s = self._report_day_strings(since_date, end_date)
 
         summaries = self._search_merged_prs_in_window(since_s, end_s)
         source = "search"
@@ -233,29 +243,15 @@ class GitHubRepoUserAnalyzer:
         print(f"  After merged_at + author filter: {len(detailed_prs)} PR(s)")
         return detailed_prs
     
-    def fetch_user_closed_issues(self, since_date: datetime) -> List[Dict]:
+    def fetch_user_closed_issues(self, since_date: datetime, end_date: datetime) -> List[Dict]:
         """Fetch issues closed by the user in the repo"""
         print(f"Fetching issues closed by @{self.username} in {self.owner}/{self.repo}...")
-        
-        # Search for issues closed by the user
-        query = f"repo:{self.owner}/{self.repo} is:issue is:closed closed:>={since_date.strftime('%Y-%m-%d')}"
-        url = f"{self.base_url}/search/issues"
-        params = {
-            "q": query,
-            "sort": "updated",
-            "order": "desc",
-            "per_page": 100
-        }
-        
-        response = requests.get(url, headers=self.headers, params=params)
-        
-        if response.status_code != 200:
-            print(f"Error fetching closed issues: {response.status_code}")
-            return []
-        
-        data = response.json()
-        all_issues = data.get("items", [])
-        
+        since_s, end_s = self._report_day_strings(since_date, end_date)
+        query = f"repo:{self.owner}/{self.repo} is:issue is:closed closed:{since_s}..{end_s}"
+        all_issues = self._search_issues_paginated(
+            query, max_pages=10, sort="updated", order="desc"
+        )
+
         # Filter to only issues closed by this user
         # GitHub doesn't have a direct "closed-by" search filter, so we need to check events
         user_closed_issues = []
@@ -269,13 +265,11 @@ class GitHubRepoUserAnalyzer:
                 # Check if this user closed the issue
                 for event in events:
                     if event.get("event") == "closed" and event.get("actor", {}).get("login", "").lower() == self.username.lower():
-                        # Check if the close event is within our date range
                         created_at = event.get("created_at")
-                        if created_at:
-                            event_date = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")
-                            if event_date >= since_date:
-                                user_closed_issues.append(issue)
-                                break
+                        close_day = self._merged_at_calendar_day_utc(created_at) if created_at else None
+                        if close_day and since_s <= close_day <= end_s:
+                            user_closed_issues.append(issue)
+                            break
         
         print(f"Found {len(user_closed_issues)} issues closed by user")
         
@@ -338,31 +332,16 @@ class GitHubRepoUserAnalyzer:
         print(f"Total reviews found: {len(all_reviews)}")
         return all_reviews
     
-    def fetch_user_issues(self, since_date: datetime) -> List[Dict]:
-        """Fetch issues opened by the user in the repo"""
+    def fetch_user_issues(self, since_date: datetime, end_date: datetime) -> List[Dict]:
+        """Fetch issues (not PRs) opened by the user in the repo within the report window."""
         print(f"Fetching issues opened by @{self.username} in {self.owner}/{self.repo}...")
-        
-        # Search for issues (not PRs) created by the user
-        query = f"repo:{self.owner}/{self.repo} is:issue author:{self.username} created:>={since_date.strftime('%Y-%m-%d')}"
-        url = f"{self.base_url}/search/issues"
-        params = {
-            "q": query,
-            "sort": "created",
-            "order": "desc",
-            "per_page": 100
-        }
-        
-        response = requests.get(url, headers=self.headers, params=params)
-        
-        if response.status_code != 200:
-            print(f"Error fetching issues: {response.status_code}")
-            return []
-        
-        data = response.json()
-        issues = data.get("items", [])
-        
+        since_s, end_s = self._report_day_strings(since_date, end_date)
+        query = (
+            f"repo:{self.owner}/{self.repo} is:issue author:{self.username} "
+            f"created:{since_s}..{end_s}"
+        )
+        issues = self._search_issues_paginated(query, max_pages=10, sort="created", order="desc")
         print(f"Found {len(issues)} issues")
-        
         return issues
     
     def fetch_user_issue_comments(self, since_date: datetime) -> List[Dict]:
@@ -424,7 +403,11 @@ class GitHubRepoUserAnalyzer:
     def analyze_activity(self, days: int, end_date: Optional[datetime] = None):
         """Analyze all user activity in the repository"""
         if end_date is None:
-            end_date = datetime.now()
+            end_date = datetime.now(timezone.utc)
+        elif end_date.tzinfo is None:
+            end_date = end_date.replace(tzinfo=timezone.utc)
+        else:
+            end_date = end_date.astimezone(timezone.utc)
         since_date = end_date - timedelta(days=days)
         
         # Store date range for reporting
@@ -467,16 +450,16 @@ class GitHubRepoUserAnalyzer:
         # Store total commits in PRs
         self.stats["total_commits_in_prs"] = total_commits_in_prs
         
+        since_s, end_s = self._report_day_strings(since_date, self.end_date)
         # Fetch reviews
         reviews = self.fetch_user_reviews(since_date)
         for review in reviews:
-            # Filter by review submission date
             submitted_at = review.get("submitted_at")
             if submitted_at:
-                review_date = datetime.strptime(submitted_at, "%Y-%m-%dT%H:%M:%SZ")
-                if review_date < since_date:
-                    continue  # Skip reviews outside the date range
-            
+                review_day = self._merged_at_calendar_day_utc(submitted_at)
+                if not review_day or not (since_s <= review_day <= end_s):
+                    continue
+
             review_data = {
                 "pr_number": review["pr_number"],
                 "pr_title": review["pr_title"],
@@ -492,7 +475,7 @@ class GitHubRepoUserAnalyzer:
         self.stats["unique_prs_reviewed"] = len(set(r["pr_number"] for r in self.stats["pull_requests_reviewed"]))
         
         # Fetch issues opened
-        issues = self.fetch_user_issues(since_date)
+        issues = self.fetch_user_issues(since_date, self.end_date)
         for issue in issues:
             issue_data = {
                 "number": issue["number"],
@@ -507,7 +490,7 @@ class GitHubRepoUserAnalyzer:
             self.stats["issues_opened"].append(issue_data)
         
         # Fetch issues closed
-        closed_issues = self.fetch_user_closed_issues(since_date)
+        closed_issues = self.fetch_user_closed_issues(since_date, self.end_date)
         for issue in closed_issues:
             issue_data = {
                 "number": issue["number"],
@@ -523,13 +506,12 @@ class GitHubRepoUserAnalyzer:
         # Fetch issue comments
         issue_comments = self.fetch_user_issue_comments(since_date)
         for comment in issue_comments:
-            # Filter by comment creation date
             created_at = comment.get("created_at")
             if created_at:
-                comment_date = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ")
-                if comment_date < since_date:
-                    continue  # Skip comments outside the date range
-            
+                cday = self._merged_at_calendar_day_utc(created_at)
+                if not cday or not (since_s <= cday <= end_s):
+                    continue
+
             comment_data = {
                 "issue_number": comment["issue_number"],
                 "issue_title": comment["issue_title"],
@@ -539,7 +521,20 @@ class GitHubRepoUserAnalyzer:
                 "body": comment.get("body", "")[:200],
             }
             self.stats["issue_comments"].append(comment_data)
-    
+
+    def has_measurable_activity(self, pages_migrated: int = 0) -> bool:
+        """True if the HTML report would show any non-zero collaboration or pages migrated."""
+        if pages_migrated:
+            return True
+        s = self.stats
+        return bool(
+            s["pull_requests_merged"]
+            or s["pull_requests_reviewed"]
+            or s["issues_opened"]
+            or s["issues_closed"]
+            or s["issue_comments"]
+        )
+
     def generate_report(self, days: int, format: str = "text", pages_migrated: int = 0) -> str:
         """Generate report in specified format"""
         if format == "text":
@@ -1331,7 +1326,13 @@ Examples:
     parser.add_argument("--token", help="GitHub personal access token (or set GITHUB_TOKEN / GITHUB_ENTERPRISE_TOKEN env var)")
     parser.add_argument("--api-url", help="GitHub API base URL for Enterprise (e.g. https://github.corp.example.com/api/v3). Or set GITHUB_API_URL.")
     parser.add_argument("--pages-migrated", type=int, default=0, help="Pages migrated count (for this repo's report card; set in the weekly script).")
-    
+    parser.add_argument(
+        "--omit-if-empty",
+        action="store_true",
+        help="If the window has no merged PRs, reviews, or issue activity (and --pages-migrated is 0), "
+        "skip writing --output and exit with code 2 (used by generate_user_activity_reports.py).",
+    )
+
     args = parser.parse_args()
     
     import os
@@ -1353,8 +1354,12 @@ Examples:
     end_date = None
     if args.startdate:
         try:
-            end_date = datetime.strptime(args.startdate, "%Y-%m-%d")
-            print(f"📅 Analyzing from {(end_date - timedelta(days=args.days)).strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}")
+            # UTC calendar day (matches generate_user_activity_reports events cutoff + GitHub day).
+            end_date = datetime.strptime(args.startdate, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            since_d = end_date - timedelta(days=args.days)
+            print(
+                f"📅 Analyzing from {since_d.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} (UTC dates)"
+            )
         except ValueError:
             print(f"❌ Error: Invalid date format '{args.startdate}'. Use YYYY-MM-DD format.")
             return
@@ -1364,10 +1369,18 @@ Examples:
     
     # Analyze activity
     analyzer.analyze_activity(args.days, end_date)
-    
+
+    if args.omit_if_empty and not analyzer.has_measurable_activity(args.pages_migrated):
+        print(
+            f"No measurable activity for {args.owner}/{args.repo} @{args.username} in window; "
+            f"omitting output (--omit-if-empty).",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
     # Generate report
     report = analyzer.generate_report(days=args.days, format=args.format, pages_migrated=args.pages_migrated)
-    
+
     # Output report
     if args.output:
         with open(args.output, "w") as f:

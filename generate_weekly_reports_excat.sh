@@ -20,9 +20,11 @@ DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED="0"
 
-# Array of usernames to generate reports for
+# Array of usernames to generate reports for. No commas.
 USERS=(
     "meejain_adobe"
+    "asthabhargava_adobe"
+    "dfink_adobe"
 )
 
 # Ensure output directory exists

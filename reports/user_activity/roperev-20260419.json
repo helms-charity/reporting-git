@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-04-20T18:25:48Z",
+  "date": "2026-04-19",
+  "username": "roperev",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/summit-bbc",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/summit-bbc",
+      "status": "ok",
+      "html_path": "reports/team/roperev-aemdemos-summit-bbc-2026-04-19.html",
+      "rate_limit_remaining": 4971
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}

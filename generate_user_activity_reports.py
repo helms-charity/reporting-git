@@ -5,7 +5,8 @@ Multi-repo user activity orchestration (JSON ledger + HTML reports).
 Repo discovery: use --repos-from-events (public events, same as list_repos_from_user_events.py),
 or GET /user/repos plus optional --repos-config allowlist (intersect by default).
 
-Writes reports/user_activity/ JSON ledgers, reports/team/ HTML, runs generate_team_index.py.
+Writes reports/user_activity/ JSON ledgers, reports/team/ HTML (skipped when a repo has no
+measurable activity in the window), runs generate_team_index.py.
 See user_activity_ledger.example.json and repos_allowlist.example.json.
 """
 
@@ -286,7 +287,7 @@ def run_report_subprocess(
 ) -> Tuple[int, str, str]:
     """
     Run github_repo_user_report.py. If report_end_date is None, do not pass --startdate
-    (matches generate_weekly_reports_*.sh: end of window is datetime.now() in the report tool).
+    (end of window is current time in UTC inside github_repo_user_report.analyze_activity).
     """
     cmd = [
         sys.executable,
@@ -305,6 +306,7 @@ def run_report_subprocess(
     ]
     if report_end_date:
         cmd.extend(["--startdate", report_end_date])
+    cmd.append("--omit-if-empty")
     if token:
         cmd.extend(["--token", token])
     if api_url:
@@ -366,7 +368,7 @@ def main() -> None:
         type=str,
         default=None,
         help="End date YYYY-MM-DD for the repo report window. If omitted, matches weekly scripts: "
-        "github_repo_user_report uses 'now' as the window end (do not pass --startdate). "
+        "github_repo_user_report uses now UTC as the window end (do not pass --startdate). "
         "Ledger filenames still use today UTC when this is omitted.",
     )
     parser.add_argument(
@@ -618,6 +620,21 @@ def main() -> None:
                 if stderr_tail.strip():
                     run_entry["report_stderr_tail"] = stderr_tail.strip()
                 ledger["runs"].append(run_entry)
+                print(f"  {item} -> ok ({rel_path})")
+            elif code == 2:
+                ledger["summary"]["skipped"] += 1
+                if out_html.exists():
+                    out_html.unlink()
+                ledger["runs"].append(
+                    {
+                        "full_name": item,
+                        "status": "empty",
+                        "reason": "no merged PRs, reviews, or issue activity in window",
+                        "rate_limit_remaining": rem_after,
+                        "report_stderr_tail": stderr_tail.strip() if stderr_tail.strip() else None,
+                    }
+                )
+                print(f"  {item} -> skipped (empty window, no HTML)")
             else:
                 ledger["summary"]["error"] += 1
                 ledger["runs"].append(
@@ -629,8 +646,8 @@ def main() -> None:
                         "report_stderr_tail": stderr_tail.strip() if stderr_tail.strip() else None,
                     }
                 )
+                print(f"  {item} -> error {code} ({rel_path})")
             write_ledger(ledger_path, ledger)
-            print(f"  {item} -> {code} ({rel_path})")
             time.sleep(args.sleep_seconds)
 
         print(f"Ledger: {ledger_path}")

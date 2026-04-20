@@ -4,8 +4,7 @@
     {
       "name": "Astha Bhargava",
       "accounts": [
-        { "login": "asthabh23", "host": "github.com" },
-        { "login": "asthabharga_adobe", "host": "enterprise" }
+        { "login": "asthabh23", "host": "github.com" }
       ]
     },
     {
@@ -15,15 +14,13 @@
     {
       "name": "Charity Helms",
       "accounts": [
-        { "login": "helms-charity", "host": "github.com" },
-        { "login": "chelms_adobe", "host": "enterprise" }
+        { "login": "helms-charity", "host": "github.com" }
       ]
     },
     {
       "name": "Dave Fink",
       "accounts": [
-        { "login": "dave-fink", "host": "github.com" },
-        { "login": "dfink_adobe", "host": "enterprise" }
+        { "login": "dave-fink", "host": "github.com" }
       ]
     },
     {
@@ -49,13 +46,8 @@
     {
       "name": "Meet Kumar Jain",
       "accounts": [
-        { "login": "meejain", "host": "github.com" },
-        { "login": "meejain_adobe", "host": "enterprise" }
+        { "login": "meejain", "host": "github.com" }
       ]
-    },
-    {
-      "name": "Neha Kaushik",
-      "accounts": [{ "login": "nehakaushik2025", "host": "github.com" }]
     },
     {
       "name": "Ross Oliver",
@@ -75,7 +67,7 @@
     },
     {
       "name": "Tyler Morris",
-      "accounts": [{ "login": "tmorris-adobe", "host": "enterprise" }]
+      "accounts": [{ "login": "tmorris-adobe", "host": "github.com" }]
     }
   ]
 }

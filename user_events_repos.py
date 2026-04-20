@@ -120,13 +120,24 @@ def _repo_full_name_from_event_repo(repo: Dict[str, Any]) -> Optional[str]:
 
 
 def collect_repos_from_events(events: List[Dict[str, Any]]) -> Tuple[Set[str], Dict[str, int]]:
-    """Return (repo full names owner/repo, per-type counts) for INCLUDED_EVENT_TYPES only."""
+    """
+    Return (repo full names owner/repo, per-type counts) for INCLUDED_EVENT_TYPES only.
+
+    IssuesEvent: only opened / closed / reopened are counted toward discovery, so a repo
+    is not added for label-only, assign-only, etc. (those do not appear on github_repo_user_report
+    issue metric cards).
+    """
     repos: Set[str] = set()
     type_counts: Dict[str, int] = {}
     for ev in events:
         et = ev.get("type") or ""
         if et not in INCLUDED_EVENT_TYPES:
             continue
+        if et == "IssuesEvent":
+            payload = ev.get("payload") or {}
+            act = (payload.get("action") or "").lower()
+            if act and act not in ("opened", "closed", "reopened"):
+                continue
         type_counts[et] = type_counts.get(et, 0) + 1
         repo = ev.get("repo") or {}
         full = _repo_full_name_from_event_repo(repo)

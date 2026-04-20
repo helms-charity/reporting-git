@@ -23,6 +23,7 @@ PAGES_MIGRATED="0"
 # Array of usernames to generate reports for
 USERS=(
     "dfink_adobe"
+    "helms-charity"
 )
 
 # Ensure output directory exists

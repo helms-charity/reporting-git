@@ -19,7 +19,6 @@ PAGES_MIGRATED=""
 # Array of usernames to generate reports for
 USERS=(
     "dave-fink"
-    "meejain"
 )
 
 # Ensure output directory exists
