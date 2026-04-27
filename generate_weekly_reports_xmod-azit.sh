@@ -14,7 +14,7 @@ REPO_OWNER="meejain"
 REPO_NAME="xmod-azit"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="0"
+PAGES_MIGRATED="197"
 
 # Array of usernames to generate reports for
 USERS=(
