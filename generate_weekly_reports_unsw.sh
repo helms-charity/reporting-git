@@ -14,7 +14,7 @@ REPO_OWNER="shivanim123"
 REPO_NAME="unsw"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="31"
+PAGES_MIGRATED="30"
 
 # Array of usernames to generate reports for
 USERS=(

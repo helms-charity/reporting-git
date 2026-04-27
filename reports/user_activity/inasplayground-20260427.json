@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-04-27T12:17:01Z",
+  "date": "2026-04-27",
+  "username": "inasplayground",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/poc-stryker",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/poc-stryker",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4987,
+      "report_stderr_tail": "No measurable activity for aemdemos/poc-stryker @inasplayground in window; omitting output (--omit-if-empty)."
+    }
+  ],
+  "summary": {
+    "ok": 0,
+    "error": 0,
+    "skipped": 1
+  }
+}

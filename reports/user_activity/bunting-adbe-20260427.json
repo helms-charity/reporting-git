@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-04-27T12:17:07Z",
+  "date": "2026-04-27",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/poc-stryker",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/poc-stryker",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-poc-stryker-2026-04-27.html",
+      "rate_limit_remaining": 4983
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
