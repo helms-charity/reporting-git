@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-04-27T12:17:33Z",
+  "date": "2026-04-27",
+  "username": "shivanim123",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/fondationsaudemarspiguet",
+      "source": "public_events"
+    },
+    {
+      "full_name": "ShivaniM123/unsw",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/fondationsaudemarspiguet",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4969,
+      "report_stderr_tail": "No measurable activity for aemdemos/fondationsaudemarspiguet @shivanim123 in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "ShivaniM123/unsw",
+      "status": "ok",
+      "html_path": "reports/team/shivanim123-ShivaniM123-unsw-2026-04-27.html",
+      "rate_limit_remaining": 4964
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 1
+  }
+}

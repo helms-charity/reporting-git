@@ -14,7 +14,7 @@ REPO_OWNER="rusmeenkhan1"
 REPO_NAME="abbvie"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="13"
+PAGES_MIGRATED="20"
 
 # Array of usernames to generate reports for
 USERS=(

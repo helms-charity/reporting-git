@@ -14,7 +14,7 @@ REPO_OWNER="meejain"
 REPO_NAME="xmod-aristocrat"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="98"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(

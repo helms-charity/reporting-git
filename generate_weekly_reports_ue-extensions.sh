@@ -14,17 +14,15 @@ set -e  # Exit on error
 # is:pr is:merged merged:2026-03-09..2026-03-16 author:dfink_adobe  (1 = meet)
 # is:issue created:2026-03-09..2026-03-16 author:meejain_adobe (astha = 2)
 # is:issue closed:2026-03-09..2026-03-16 author:meejain_adobe
-REPO_OWNER="Adobe-AEM-Foundation"
-REPO_NAME="aem-experience-catalyst"
+REPO_OWNER="OneAdobe"
+REPO_NAME="universal-editor-extensions"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for. No commas.
 USERS=(
-    "meejain_adobe"
-    "asthabharga_adobe"
-    "dfink_adobe"
+    "chelms_adobe"
 )
 
 # Ensure output directory exists
