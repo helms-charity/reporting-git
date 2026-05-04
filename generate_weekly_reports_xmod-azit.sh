@@ -11,10 +11,10 @@
 set -e  # Exit on error
 
 REPO_OWNER="meejain"
-REPO_NAME="xmod-azit"
+REPO_NAME="xmod-hugo"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="197"
+PAGES_MIGRATED=""
 
 # Array of usernames to generate reports for
 USERS=(

@@ -11,19 +11,19 @@ Track GitHub activity within specific repositories: PRs merged, code reviews, is
 - Move last week's files into a new folder with date
 - If there are pages migrated, add those to the weekly reports.sh scripts first
 - then run the weekly to see what people worked on in public github.com repos:
-./generate_user_activity_reports.sh --startdate 2026-04-27 --days 7
+./generate_user_activity_reports.sh --startdate 2026-05-04 --days 7
 
 - Next run individual weekly reports.sh per known private repos on github.com (such as IDFC).
-/.generate_weekly_reports_fondationsap.sh --startdate 2026-04-27 --days 7
+/.generate_weekly_reports_fondationsap.sh --startdate 2026-05-04 --days 7
 /.generate_weekly_reports_idfc.sh --startdate 2026-04-27 --days 7
 
 - delete any individual reports that are all 0's, and delete any that are non-related repos.
 - Go to each person's enterprise git profile to see if they worked on something in the past week
-https://github.com/meejain_adobe?tab=overview&from=2026-04-20&to=2026-04-27
-https://github.com/dfink_adobe?tab=overview&from=2026-04-20&to=2026-04-27
-https://github.com/asthabharga_adobe?tab=overview&from=2026-04-06&to=2026-04-13
+https://github.com/meejain_adobe?tab=overview&from=2026-4-27&to=2026-05-04
+https://github.com/dfink_adobe?tab=overview&from=2026-04-27&to=2026-05-04
+https://github.com/asthabharga_adobe?tab=overview&from=2026-04-27&to=2026-05-04
 
-./generate_weekly_reports_excat.sh --startdate 2026-04-27 --days 7
+./generate_weekly_reports_excat.sh --startdate 2026-05-04 --days 7
 ./generate_weekly_reports_growth-lab.sh --startdate 2026-04-27 --days 7
 ./generate_weekly_reports_ue-extensions.sh --startdate 2026-04-27 --days 7
 

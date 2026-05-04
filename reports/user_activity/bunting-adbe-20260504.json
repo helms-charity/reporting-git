@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-04T16:24:15Z",
+  "date": "2026-05-04",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-ise-boilerplate-2026-05-04.html",
+      "rate_limit_remaining": 4652
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
