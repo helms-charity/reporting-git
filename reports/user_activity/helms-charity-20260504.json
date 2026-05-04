@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-04T16:21:33Z",
+  "date": "2026-05-04",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/summit-trt",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemsites/idfc",
+      "source": "public_events"
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-poc-vyepti-2026-05-04.html",
+      "rate_limit_remaining": 4949
+    },
+    {
+      "full_name": "aemdemos/summit-trt",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-summit-trt-2026-05-04.html",
+      "rate_limit_remaining": 4949
+    },
+    {
+      "full_name": "aemsites/idfc",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemsites-idfc-2026-05-04.html",
+      "rate_limit_remaining": 4754
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-reporting-git-2026-05-04.html",
+      "rate_limit_remaining": 4751
+    }
+  ],
+  "summary": {
+    "ok": 4,
+    "error": 0,
+    "skipped": 0
+  }
+}

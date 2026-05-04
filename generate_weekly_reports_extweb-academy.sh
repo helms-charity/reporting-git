@@ -14,14 +14,11 @@ REPO_OWNER="aemsites"
 REPO_NAME="extweb-academy"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED=""
+PAGES_MIGRATED="45"
 
 # Array of usernames to generate reports for
 USERS=(
-    "helms-charity"
-    "amarghioali"
     "inasplayground"
-    "iustinp"
 )
 
 # Ensure output directory exists

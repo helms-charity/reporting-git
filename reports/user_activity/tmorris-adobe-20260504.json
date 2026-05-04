@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-04T16:25:15Z",
+  "date": "2026-05-04",
+  "username": "tmorris-adobe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/tmorris-adobe-aemdemos-poc-vyepti-2026-05-04.html",
+      "rate_limit_remaining": 4605
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
