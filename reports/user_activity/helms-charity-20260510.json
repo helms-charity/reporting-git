@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-11T13:58:24Z",
+  "date": "2026-05-10",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/poc-manu",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/summit-gen",
+      "source": "public_events"
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4712,
+      "report_stderr_tail": "No measurable activity for aemdemos/ise-boilerplate @helms-charity in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "aemdemos/poc-manu",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-poc-manu-2026-05-10.html",
+      "rate_limit_remaining": 4710
+    },
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-poc-vyepti-2026-05-10.html",
+      "rate_limit_remaining": 4706
+    },
+    {
+      "full_name": "aemdemos/summit-gen",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4706,
+      "report_stderr_tail": "No measurable activity for aemdemos/summit-gen @helms-charity in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-reporting-git-2026-05-10.html",
+      "rate_limit_remaining": 4705
+    }
+  ],
+  "summary": {
+    "ok": 3,
+    "error": 0,
+    "skipped": 2
+  }
+}
