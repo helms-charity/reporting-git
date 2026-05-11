@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-11T13:58:13Z",
+  "date": "2026-05-10",
+  "username": "amarghioali",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/poc-stryker",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/summit-avv",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/poc-stryker",
+      "status": "ok",
+      "html_path": "reports/team/amarghioali-aemdemos-poc-stryker-2026-05-10.html",
+      "rate_limit_remaining": 4714
+    },
+    {
+      "full_name": "aemdemos/summit-avv",
+      "status": "ok",
+      "html_path": "reports/team/amarghioali-aemdemos-summit-avv-2026-05-10.html",
+      "rate_limit_remaining": 4713
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 0
+  }
+}

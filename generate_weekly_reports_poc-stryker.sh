@@ -14,17 +14,13 @@ REPO_OWNER="aemdemos"
 REPO_NAME="poc-stryker"
 DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="20"
+PAGES_MIGRATED="26"
 
 # Array of usernames to generate reports for
 USERS=(
-    "helms-charity"
-    "roperev"
-    "tmorris-adobe"
     "zhummerz"
     "techmaven"
     "bunting-adbe"
-    
     "amarghioali"
     "inasplayground"
     "iustinp"
