@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-18T14:20:22Z",
+  "date": "2026-05-17",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "source": "public_events"
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "source": "public_events"
+    },
+    {
+      "full_name": "helms-charity/slicc",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4982,
+      "report_stderr_tail": "No measurable activity for aemdemos/ise-boilerplate @helms-charity in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-reporting-git-2026-05-17.html",
+      "rate_limit_remaining": 4981
+    },
+    {
+      "full_name": "helms-charity/slicc",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-slicc-2026-05-17.html",
+      "rate_limit_remaining": 4980
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 1
+  }
+}

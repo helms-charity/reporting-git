@@ -24,7 +24,7 @@ PAGES_MIGRATED="0"
 USERS=(
     "meejain_adobe"
     "asthabharga_adobe"
-    "dfink_adobe"
+    "eroper_adobe"
 )
 
 # Ensure output directory exists
