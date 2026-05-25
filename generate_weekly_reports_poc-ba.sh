@@ -10,9 +10,12 @@
 
 set -e  # Exit on error
 
+PROGNAME="${0##*/}"
+source "$(dirname "$0")/weekly_report_parse_args.sh"
+weekly_report_parse_args "$@"
+
 REPO_OWNER="aemdemos"
 REPO_NAME="summit-boe"
-DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED=""
 
@@ -36,7 +39,7 @@ fi
 
 echo "🚀 Starting report generation for ${#USERS[@]} users..."
 echo "Repository: $REPO_OWNER/$REPO_NAME"
-echo "Date: $DATE"
+echo "Window: ${DAYS} UTC day(s) ending $DATE"
 echo "---"
 
 # Start all reports sequentially (to avoid rate limiting)
@@ -52,7 +55,8 @@ for user in "${USERS[@]}"; do
     set +e
     if [ -n "$GITHUB_TOKEN" ]; then
         python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" \
-            --days 7 \
+            --days "$DAYS" \
+            --startdate "$DATE" \
             --format html \
             --token "$GITHUB_TOKEN" \
             --pages-migrated "${PAGES_MIGRATED:-0}" \
@@ -60,7 +64,8 @@ for user in "${USERS[@]}"; do
             --output "$OUTPUT_FILE"
     else
         python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" \
-            --days 7 \
+            --days "$DAYS" \
+            --startdate "$DATE" \
             --format html \
             --pages-migrated "${PAGES_MIGRATED:-0}" \
             --omit-if-empty \

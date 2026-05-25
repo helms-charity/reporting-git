@@ -37,8 +37,8 @@ fi
 # Omit --startdate: events cutoff and per-repo reports both use the current instant in UTC as
 # the window end (github_repo_user_report analyzes with end_date = now UTC).
 #
-# With --startdate: that YYYY-MM-DD is the last UTC calendar day of the window; the first day is
-# (--startdate minus --days), matching the public-events cutoff in generate_user_activity_reports.py.
+# With --startdate: that YYYY-MM-DD is the last UTC calendar day of the window (inclusive); the
+# first day is (--startdate minus (--days - 1)), e.g. 7 days ending 2026-05-24 → 2026-05-18..24.
 # Issue/PR Search qualifiers use the same UTC day bounds, so metric cards align with repo discovery.
 #
 # Pass more flags after the script name, e.g. --days 14 --users meejain --startdate 2026-04-10

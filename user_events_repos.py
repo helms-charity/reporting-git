@@ -54,12 +54,30 @@ def resolve_token_and_base(host: str) -> Tuple[str, Optional[str]]:
     raise ValueError(f"Unknown host: {host!r} (use 'github.com' or 'enterprise')")
 
 
+def report_window_bounds(end_date_str: str, days: int) -> Tuple[datetime, datetime, str, str]:
+    """
+    N full UTC calendar days ending on end_date_str (last day inclusive).
+
+    Returns (since_dt, end_dt_exclusive, since_day_str, end_day_str) where since_dt is
+    00:00 UTC on the first day and end_dt_exclusive is 00:00 UTC on the day after the last.
+    """
+    if days < 1:
+        raise ValueError("days must be >= 1")
+    end_day = datetime.strptime(end_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    since_day = end_day - timedelta(days=days - 1)
+    end_exclusive = end_day + timedelta(days=1)
+    return (
+        since_day,
+        end_exclusive,
+        since_day.strftime("%Y-%m-%d"),
+        end_date_str,
+    )
+
+
 def cutoff_for_report_window(end_date_str: str, days: int) -> datetime:
-    """
-    Match github_repo_user_report window: since_date = end_date - days (naive UTC midnight end date).
-    """
-    end = datetime.strptime(end_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-    return end - timedelta(days=days)
+    """UTC midnight at the start of the first inclusive day (matches github_repo_user_report)."""
+    since_dt, _, _, _ = report_window_bounds(end_date_str, days)
+    return since_dt
 
 
 def fetch_events_for_user(
@@ -67,8 +85,13 @@ def fetch_events_for_user(
     api_base: str,
     token: Optional[str],
     cutoff: datetime,
+    end_exclusive: Optional[datetime] = None,
 ) -> List[Dict[str, Any]]:
-    """Paginate GET /users/{login}/events/public until empty or past cutoff."""
+    """Paginate GET /users/{login}/events/public until empty or past cutoff.
+
+    When end_exclusive is set (fixed --startdate windows), events at or after that instant
+    are skipped; only events in [cutoff, end_exclusive) are kept.
+    """
     events: List[Dict[str, Any]] = []
     session = requests.Session()
     hdrs = headers(token)
@@ -94,6 +117,8 @@ def fetch_events_for_user(
             dt = parse_iso_utc(created)
             if dt < cutoff:
                 return events
+            if end_exclusive is not None and dt >= end_exclusive:
+                continue
             events.append(ev)
         if len(batch) < 100:
             break

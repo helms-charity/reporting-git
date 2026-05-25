@@ -10,13 +10,16 @@
 # Optional: also set GITHUB_TOKEN for github.com repos (other scripts use it).
 
 set -e  # Exit on error
+
+PROGNAME="${0##*/}"
+source "$(dirname "$0")/weekly_report_parse_args.sh"
+weekly_report_parse_args "$@"
 # https://github.com/Adobe-AEM-Foundation/aem-experience-catalyst
 # is:pr is:merged merged:2026-03-09..2026-03-16 author:dfink_adobe  (1 = meet)
 # is:issue created:2026-03-09..2026-03-16 author:meejain_adobe (astha = 2)
 # is:issue closed:2026-03-09..2026-03-16 author:meejain_adobe
 REPO_OWNER="OneAdobe"
 REPO_NAME="universal-editor-extensions"
-DATE=$(date +%Y-%m-%d)
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED="0"
 
@@ -38,7 +41,7 @@ fi
 
 echo "🚀 Starting report generation for ${#USERS[@]} users..."
 echo "Repository: $REPO_OWNER/$REPO_NAME"
-echo "Date: $DATE"
+echo "Window: ${DAYS} UTC day(s) ending $DATE"
 echo "---"
 
 # Start all reports sequentially (to avoid rate limiting)
@@ -51,7 +54,7 @@ for user in "${USERS[@]}"; do
     echo "Starting report for @${user}..."
     
     # Run sequentially (no & at end). Use Enterprise API URL and token when set.
-    CMD=(python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" --days 7 --format html --pages-migrated "${PAGES_MIGRATED:-0}" --omit-if-empty --output "$OUTPUT_FILE")
+    CMD=(python github_repo_user_report.py "$REPO_OWNER" "$REPO_NAME" "$user" --days "$DAYS" --startdate "$DATE" --format html --pages-migrated "${PAGES_MIGRATED:-0}" --omit-if-empty --output "$OUTPUT_FILE")
     if [ -n "$GITHUB_API_URL" ]; then
         CMD+=(--api-url "$GITHUB_API_URL")
     fi
