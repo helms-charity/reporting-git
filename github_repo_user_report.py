@@ -114,12 +114,24 @@ class GitHubRepoUserAnalyzer:
 
     @staticmethod
     def _report_day_strings(since_date: datetime, end_date: datetime) -> tuple[str, str]:
-        """UTC calendar YYYY-MM-DD bounds for Search qualifiers (matches events cutoff + merge day)."""
+        """UTC calendar YYYY-MM-DD bounds for Search qualifiers (inclusive end day)."""
         s = since_date if since_date.tzinfo else since_date.replace(tzinfo=timezone.utc)
         e = end_date if end_date.tzinfo else end_date.replace(tzinfo=timezone.utc)
         s = s.astimezone(timezone.utc)
         e = e.astimezone(timezone.utc)
-        return s.strftime("%Y-%m-%d"), e.strftime("%Y-%m-%d")
+        since_s = s.strftime("%Y-%m-%d")
+        # Fixed windows pass end_date as 00:00 UTC on the day after the last inclusive day.
+        if (
+            e.hour == 0
+            and e.minute == 0
+            and e.second == 0
+            and e.microsecond == 0
+            and e > s
+        ):
+            end_s = (e - timedelta(days=1)).strftime("%Y-%m-%d")
+        else:
+            end_s = e.strftime("%Y-%m-%d")
+        return since_s, end_s
 
     def _search_merged_prs_in_window(self, since_s: str, end_s: str) -> List[Dict]:
         """
@@ -400,7 +412,12 @@ class GitHubRepoUserAnalyzer:
         print(f"Total issue comments found: {len(all_comments)}")
         return all_comments
     
-    def analyze_activity(self, days: int, end_date: Optional[datetime] = None):
+    def analyze_activity(
+        self,
+        days: int,
+        end_date: Optional[datetime] = None,
+        since_date: Optional[datetime] = None,
+    ):
         """Analyze all user activity in the repository"""
         if end_date is None:
             end_date = datetime.now(timezone.utc)
@@ -408,7 +425,12 @@ class GitHubRepoUserAnalyzer:
             end_date = end_date.replace(tzinfo=timezone.utc)
         else:
             end_date = end_date.astimezone(timezone.utc)
-        since_date = end_date - timedelta(days=days)
+        if since_date is None:
+            since_date = end_date - timedelta(days=days)
+        elif since_date.tzinfo is None:
+            since_date = since_date.replace(tzinfo=timezone.utc)
+        else:
+            since_date = since_date.astimezone(timezone.utc)
         
         # Store date range for reporting
         self.end_date = end_date
@@ -554,7 +576,8 @@ class GitHubRepoUserAnalyzer:
         
         # Show date range if available
         if hasattr(self, 'since_date') and hasattr(self, 'end_date'):
-            report.append(f"Period: {self.since_date.strftime('%Y-%m-%d')} to {self.end_date.strftime('%Y-%m-%d')} ({days} days)")
+            since_s, end_s = self._report_day_strings(self.since_date, self.end_date)
+            report.append(f"Period: {since_s} to {end_s} ({days} days)")
         else:
             report.append(f"Period: Last {days} days")
         
@@ -988,8 +1011,11 @@ class GitHubRepoUserAnalyzer:
         
         # Show date range if available
         if hasattr(self, 'since_date') and hasattr(self, 'end_date'):
+            since_s, end_s = self._report_day_strings(self.since_date, self.end_date)
+            since_d = datetime.strptime(since_s, "%Y-%m-%d")
+            end_d = datetime.strptime(end_s, "%Y-%m-%d")
             html += f"""
-                📅 Period: {self.since_date.strftime('%B %d, %Y')} to {self.end_date.strftime('%B %d, %Y')} ({days} days) | """
+                📅 Period: {since_d.strftime('%B %d, %Y')} to {end_d.strftime('%B %d, %Y')} ({days} days) | """
         else:
             html += f"""
                 📅 Period: Last {days} days | """
@@ -1318,8 +1344,8 @@ Examples:
     parser.add_argument("username", help="GitHub username to analyze")
     parser.add_argument("--days", type=int, default=7, 
                        help="Number of days to analyze (default: 7)")
-    parser.add_argument("--startdate", type=str, 
-                       help="End date for analysis in YYYY-MM-DD format (default: today). Use with --days to get period ending on this date.")
+    parser.add_argument("--startdate", type=str,
+                       help="Last UTC calendar day of the window (YYYY-MM-DD). With --days 7, analyzes 7 full UTC days ending on this date (inclusive). Default: now UTC when omitted.")
     parser.add_argument("--format", choices=["text", "html", "json"], default="text",
                        help="Output format (default: text)")
     parser.add_argument("--output", "-o", help="Output file (default: stdout)")
@@ -1352,13 +1378,14 @@ Examples:
     
     # Parse startdate if provided
     end_date = None
+    since_date = None
     if args.startdate:
         try:
-            # UTC calendar day (matches generate_user_activity_reports events cutoff + GitHub day).
-            end_date = datetime.strptime(args.startdate, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-            since_d = end_date - timedelta(days=args.days)
+            from user_events_repos import report_window_bounds
+
+            since_date, end_date, since_d, end_d = report_window_bounds(args.startdate, args.days)
             print(
-                f"📅 Analyzing from {since_d.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')} (UTC dates)"
+                f"📅 Analyzing {args.days} UTC calendar day(s): {since_d} through {end_d} (inclusive)"
             )
         except ValueError:
             print(f"❌ Error: Invalid date format '{args.startdate}'. Use YYYY-MM-DD format.")
@@ -1368,7 +1395,7 @@ Examples:
     analyzer = GitHubRepoUserAnalyzer(args.owner, args.repo, args.username, token, base_url=api_url)
     
     # Analyze activity
-    analyzer.analyze_activity(args.days, end_date)
+    analyzer.analyze_activity(args.days, end_date, since_date)
 
     if args.omit_if_empty and not analyzer.has_measurable_activity(args.pages_migrated):
         print(

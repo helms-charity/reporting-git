@@ -424,7 +424,7 @@ def generate_index_html(reports: List[Dict], output_path: Path, pages_migrated: 
                         <th>Reviews</th>
                         <th>Issues Opened</th>
                         <th>Issues Closed</th>
-                        <th>Pages Migrated</th>
+                        <th>Pgs Migrated (proj.)</th>
                         <th>Lines +</th>
                         <th>Lines -</th>
                     </tr>

@@ -11,49 +11,12 @@
 set -e  # Exit on error
 
 PROGNAME="${0##*/}"
+source "$(dirname "$0")/weekly_report_parse_args.sh"
+weekly_report_parse_args "$@"
+
 REPO_OWNER="aemsites"
 REPO_NAME="idfc"
-DATE=$(date +%Y-%m-%d)
-DAYS=7
 OUTPUT_DIR="reports/team"
-
-usage() {
-    echo "Usage: $PROGNAME [--startdate YYYY-MM-DD] [--days N]" >&2
-    echo "  --startdate   End date of the analysis window (default: today)" >&2
-    echo "  --days        Window length in days (default: 7)" >&2
-    exit "${1:-1}"
-}
-
-while [ $# -gt 0 ]; do
-    case "$1" in
-        --startdate)
-            [ -n "${2:-}" ] || usage
-            DATE="$2"
-            shift 2
-            ;;
-        --days)
-            [ -n "${2:-}" ] || usage
-            DAYS="$2"
-            shift 2
-            ;;
-        -h|--help)
-            usage 0
-            ;;
-        *)
-            echo "Unknown option: $1" >&2
-            usage
-            ;;
-    esac
-done
-
-if ! [[ "$DAYS" == <-> ]] || (( DAYS < 1 )); then
-    echo "Error: --days must be a positive integer (got '$DAYS')" >&2
-    usage
-fi
-if ! [[ "$DATE" =~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' ]]; then
-    echo "Error: --startdate must be YYYY-MM-DD (got '$DATE')" >&2
-    usage
-fi
 PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
@@ -75,7 +38,7 @@ fi
 
 echo "🚀 Starting report generation for ${#USERS[@]} users..."
 echo "Repository: $REPO_OWNER/$REPO_NAME"
-echo "Window: ${DAYS} day(s) ending $DATE"
+echo "Window: ${DAYS} UTC day(s) ending $DATE"
 echo "---"
 
 # Start all reports sequentially (to avoid rate limiting)

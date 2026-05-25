@@ -27,8 +27,8 @@ import requests
 
 from user_events_repos import (
     collect_repos_from_events,
-    cutoff_for_report_window,
     fetch_events_for_user,
+    report_window_bounds,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -367,9 +367,8 @@ def main() -> None:
         "--startdate",
         type=str,
         default=None,
-        help="End date YYYY-MM-DD for the repo report window. If omitted, matches weekly scripts: "
-        "github_repo_user_report uses now UTC as the window end (do not pass --startdate). "
-        "Ledger filenames still use today UTC when this is omitted.",
+        help="Last UTC calendar day of the window (YYYY-MM-DD). With --days N, N full UTC days "
+        "ending on this date (inclusive). If omitted, repo reports use now UTC; events use rolling N days.",
     )
     parser.add_argument(
         "--org",
@@ -464,11 +463,20 @@ def main() -> None:
                     f"  [{login}] WARNING: GITHUB_TOKEN not set — public events limited to 60 req/hr",
                     file=sys.stderr,
                 )
+            end_exclusive = None
             if args.startdate:
-                cutoff = cutoff_for_report_window(args.startdate, args.days)
+                cutoff, end_exclusive, since_d, end_d = report_window_bounds(
+                    args.startdate, args.days
+                )
+                print(
+                    f"  Events window: {since_d} through {end_d} UTC (inclusive)",
+                    file=sys.stderr,
+                )
             else:
                 cutoff = datetime.now(timezone.utc) - timedelta(days=args.days)
-            events = fetch_events_for_user(login, api_base, token, cutoff)
+            events = fetch_events_for_user(
+                login, api_base, token, cutoff, end_exclusive=end_exclusive
+            )
             final_set, _ = collect_repos_from_events(events)
             token_source = "public_events"
         else:

@@ -28,7 +28,7 @@ from typing import Any, Dict, List, Set
 from user_events_repos import (
     INCLUDED_EVENT_TYPES,
     collect_repos_from_events,
-    cutoff_for_report_window,
+    report_window_bounds,
     fetch_events_for_user,
     resolve_token_and_base,
 )
@@ -67,12 +67,15 @@ def main() -> None:
     args = parser.parse_args()
 
     startdate = args.startdate or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    cutoff = cutoff_for_report_window(startdate, args.days)
+    cutoff, end_exclusive, since_d, end_d = report_window_bounds(startdate, args.days)
 
     people = load_people(args.user_names)
     all_repos: Set[str] = set()
 
-    print(f"Window: {args.days} days ending {startdate} (since {cutoff.isoformat()})", file=sys.stderr)
+    print(
+        f"Window: {args.days} UTC calendar day(s) {since_d} through {end_d} (inclusive)",
+        file=sys.stderr,
+    )
     print(f"Including only event types: {sorted(INCLUDED_EVENT_TYPES)}", file=sys.stderr)
     print("", file=sys.stderr)
 
@@ -100,7 +103,9 @@ def main() -> None:
 
             if args.verbose:
                 print(f"Fetching events: {login} ({host}) …", file=sys.stderr)
-            events = fetch_events_for_user(login, api_base, token, cutoff)
+            events = fetch_events_for_user(
+                login, api_base, token, cutoff, end_exclusive=end_exclusive
+            )
             included = [e for e in events if (e.get("type") or "") in INCLUDED_EVENT_TYPES]
             repos, type_counts = collect_repos_from_events(events)
             all_repos |= repos
