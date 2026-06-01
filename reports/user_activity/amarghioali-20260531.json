@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-01T13:11:47Z",
+  "date": "2026-05-31",
+  "username": "amarghioali",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/poc-hb",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/poc-hb",
+      "status": "ok",
+      "html_path": "reports/team/amarghioali-aemdemos-poc-hb-2026-05-31.html",
+      "rate_limit_remaining": 4990
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
