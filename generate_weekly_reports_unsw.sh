@@ -17,7 +17,7 @@ weekly_report_parse_args "$@"
 REPO_OWNER="shivanim123"
 REPO_NAME="unsw"
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="15"
+PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for
 USERS=(
