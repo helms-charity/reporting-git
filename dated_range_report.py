@@ -1,8 +1,6 @@
 """
 Consolidated HTML table for --from-date / --to-date activity runs.
-BUT, I run out of rate limits with the Search API very quickly. 
-Uses the Search API to discover repos (the public events feed only keeps ~300
-recent events and often cannot reach a full month in the past).
+Repo discovery uses the public events feed (see generate_user_activity_reports.py).
 """
 
 from __future__ import annotations

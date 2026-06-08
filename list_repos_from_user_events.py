@@ -28,7 +28,6 @@ from typing import Any, Dict, List, Set
 from user_events_repos import (
     INCLUDED_EVENT_TYPES,
     collect_repos_from_events,
-    collect_repos_from_search,
     fetch_events_for_user,
     resolve_report_window,
     resolve_token_and_base,
@@ -125,42 +124,25 @@ def main() -> None:
                 print(f"SKIP {login}: no GITHUB_ENTERPRISE_TOKEN or GITHUB_TOKEN", file=sys.stderr)
                 continue
 
-            if window.fixed_calendar:
-                if args.verbose:
-                    print(f"Search API discovery: {login} ({host}) …", file=sys.stderr)
-                repos, search_hits = collect_repos_from_search(
-                    login, api_base, token, window.since_day, window.end_day
-                )
-                all_repos |= repos
-                print(
-                    f"  {login}: search → {len(repos)} repo(s)"
-                    + (
-                        f" ({', '.join(f'{k}={v}' for k, v in sorted(search_hits.items()))})"
-                        if search_hits
-                        else ""
-                    ),
-                    file=sys.stderr,
-                )
-            else:
-                if args.verbose:
-                    print(f"Fetching events: {login} ({host}) …", file=sys.stderr)
-                events = fetch_events_for_user(
-                    login,
-                    api_base,
-                    token,
-                    window.cutoff,
-                    end_exclusive=window.end_exclusive,
-                )
-                included = [e for e in events if (e.get("type") or "") in INCLUDED_EVENT_TYPES]
-                repos, type_counts = collect_repos_from_events(events)
-                all_repos |= repos
-                print(
-                    f"  {login}: {len(events)} events in window, "
-                    f"{len(included)} matching PR/Issue types → {len(repos)} repo(s)",
-                    file=sys.stderr,
-                )
-                if args.verbose and type_counts:
-                    print(f"    types: {dict(sorted(type_counts.items()))}", file=sys.stderr)
+            if args.verbose:
+                print(f"Fetching events: {login} ({host}) …", file=sys.stderr)
+            events = fetch_events_for_user(
+                login,
+                api_base,
+                token,
+                window.cutoff,
+                end_exclusive=window.end_exclusive,
+            )
+            included = [e for e in events if (e.get("type") or "") in INCLUDED_EVENT_TYPES]
+            repos, type_counts = collect_repos_from_events(events)
+            all_repos |= repos
+            print(
+                f"  {login}: {len(events)} events in window, "
+                f"{len(included)} matching PR/Issue types → {len(repos)} repo(s)",
+                file=sys.stderr,
+            )
+            if args.verbose and type_counts:
+                print(f"    types: {dict(sorted(type_counts.items()))}", file=sys.stderr)
 
     lines = sorted(all_repos, key=str.lower)
     args.output.parent.mkdir(parents=True, exist_ok=True)

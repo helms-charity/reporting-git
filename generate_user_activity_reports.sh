@@ -34,8 +34,7 @@ fi
 #   --from-date YYYY-MM-DD --to-date YYYY-MM-DD
 #       Inclusive UTC calendar range (same idea as GitHub profile overview URLs:
 #       https://github.com/USER?tab=overview&from=2026-03-01&to=2026-03-31)
-#       Uses the Search API to discover repos (the public events feed only keeps ~300
-#       recent events and often cannot reach a full month in the past).
+#       Writes one consolidated table HTML instead of per-repo team reports.
 #
 # Example: 7 calendar days ending on 2026-04-10 (inclusive):
 #   ./generate_user_activity_reports.sh --startdate 2026-04-10 --days 7
