@@ -1332,6 +1332,9 @@ Examples:
   
   # Report for specific date range (7 days ending on 2026-01-31)
   python github_repo_user_report.py aemsites idfc helms-charity --days 7 --startdate 2026-01-31
+
+  # Inclusive calendar range (like GitHub profile ?from=&to=)
+  python github_repo_user_report.py aemsites idfc helms-charity --from-date 2026-03-01 --to-date 2026-03-31
   
   # With GitHub token for higher rate limits
   export GITHUB_TOKEN=your_token_here
@@ -1346,6 +1349,18 @@ Examples:
                        help="Number of days to analyze (default: 7)")
     parser.add_argument("--startdate", type=str,
                        help="Last UTC calendar day of the window (YYYY-MM-DD). With --days 7, analyzes 7 full UTC days ending on this date (inclusive). Default: now UTC when omitted.")
+    parser.add_argument(
+        "--from-date",
+        type=str,
+        metavar="YYYY-MM-DD",
+        help="First UTC calendar day (inclusive), like GitHub profile ?from=. Requires --to-date.",
+    )
+    parser.add_argument(
+        "--to-date",
+        type=str,
+        metavar="YYYY-MM-DD",
+        help="Last UTC calendar day (inclusive), like GitHub profile ?to=. Requires --from-date.",
+    )
     parser.add_argument("--format", choices=["text", "html", "json"], default="text",
                        help="Output format (default: text)")
     parser.add_argument("--output", "-o", help="Output file (default: stdout)")
@@ -1376,26 +1391,37 @@ Examples:
         print("⚠️  Warning: No GitHub token provided. Rate limits will be lower (60 requests/hour).")
         print("   Set GITHUB_TOKEN (or GITHUB_ENTERPRISE_TOKEN for --api-url) or use --token.\n")
     
-    # Parse startdate if provided
+    # Parse date window
     end_date = None
     since_date = None
-    if args.startdate:
-        try:
-            from user_events_repos import report_window_bounds
+    report_days = args.days
+    try:
+        from user_events_repos import resolve_report_window
 
-            since_date, end_date, since_d, end_d = report_window_bounds(args.startdate, args.days)
-            print(
-                f"📅 Analyzing {args.days} UTC calendar day(s): {since_d} through {end_d} (inclusive)"
-            )
-        except ValueError:
-            print(f"❌ Error: Invalid date format '{args.startdate}'. Use YYYY-MM-DD format.")
-            return
-    
+        window = resolve_report_window(
+            startdate=args.startdate,
+            days=args.days,
+            from_date=args.from_date,
+            to_date=args.to_date,
+        )
+    except ValueError as exc:
+        print(f"❌ Error: {exc}")
+        return
+
+    if window.fixed_calendar:
+        since_date = window.cutoff
+        end_date = window.end_exclusive
+        report_days = window.days
+        print(
+            f"📅 Analyzing {report_days} UTC calendar day(s): "
+            f"{window.since_day} through {window.end_day} (inclusive)"
+        )
+
     # Create analyzer
     analyzer = GitHubRepoUserAnalyzer(args.owner, args.repo, args.username, token, base_url=api_url)
-    
+
     # Analyze activity
-    analyzer.analyze_activity(args.days, end_date, since_date)
+    analyzer.analyze_activity(report_days, end_date, since_date)
 
     if args.omit_if_empty and not analyzer.has_measurable_activity(args.pages_migrated):
         print(
@@ -1406,7 +1432,9 @@ Examples:
         sys.exit(2)
 
     # Generate report
-    report = analyzer.generate_report(days=args.days, format=args.format, pages_migrated=args.pages_migrated)
+    report = analyzer.generate_report(
+        days=report_days, format=args.format, pages_migrated=args.pages_migrated
+    )
 
     # Output report
     if args.output:

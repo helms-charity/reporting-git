@@ -5,8 +5,9 @@ Multi-repo user activity orchestration (JSON ledger + HTML reports).
 Repo discovery: use --repos-from-events (public events, same as list_repos_from_user_events.py),
 or GET /user/repos plus optional --repos-config allowlist (intersect by default).
 
-Writes reports/user_activity/ JSON ledgers, reports/team/ HTML (skipped when a repo has no
-measurable activity in the window), runs generate_team_index.py.
+Writes reports/user_activity/ JSON ledgers. Weekly runs: reports/team/ HTML per repo.
+With --from-date/--to-date: one consolidated reports/dated-report-FROM-to-TO.html table.
+Otherwise runs generate_team_index.py when finished.
 See user_activity_ledger.example.json and repos_allowlist.example.json.
 """
 
@@ -25,10 +26,16 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import requests
 
+from dated_range_report import (
+    collect_repo_activity_counts,
+    dated_report_output_path,
+    write_dated_report_html,
+)
 from user_events_repos import (
     collect_repos_from_events,
+    collect_repos_from_search,
     fetch_events_for_user,
-    report_window_bounds,
+    resolve_report_window,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -284,6 +291,9 @@ def run_report_subprocess(
     out_html: Path,
     token: Optional[str],
     api_url: Optional[str],
+    *,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
 ) -> Tuple[int, str, str]:
     """
     Run github_repo_user_report.py. If report_end_date is None, do not pass --startdate
@@ -304,7 +314,9 @@ def run_report_subprocess(
         "--output",
         str(out_html),
     ]
-    if report_end_date:
+    if from_date and to_date:
+        cmd.extend(["--from-date", from_date, "--to-date", to_date])
+    elif report_end_date:
         cmd.extend(["--startdate", report_end_date])
     cmd.append("--omit-if-empty")
     if token:
@@ -368,7 +380,23 @@ def main() -> None:
         type=str,
         default=None,
         help="Last UTC calendar day of the window (YYYY-MM-DD). With --days N, N full UTC days "
-        "ending on this date (inclusive). If omitted, repo reports use now UTC; events use rolling N days.",
+        "ending on this date (inclusive). Ignored if --from-date/--to-date are set.",
+    )
+    parser.add_argument(
+        "--from-date",
+        type=str,
+        default=None,
+        metavar="YYYY-MM-DD",
+        help="First UTC calendar day of the window (inclusive), like GitHub profile ?from=. "
+        "Requires --to-date.",
+    )
+    parser.add_argument(
+        "--to-date",
+        type=str,
+        default=None,
+        metavar="YYYY-MM-DD",
+        help="Last UTC calendar day of the window (inclusive), like GitHub profile ?to=. "
+        "Requires --from-date.",
     )
     parser.add_argument(
         "--org",
@@ -405,11 +433,33 @@ def main() -> None:
         action="store_true",
         help="Skip generate_team_index.py at the end",
     )
+    parser.add_argument(
+        "--dated-report-output",
+        type=Path,
+        help="With --from-date/--to-date: write consolidated table HTML here "
+        "(default: reports/dated-report-FROM-to-TO.html)",
+    )
     args = parser.parse_args()
 
-    ledger_date = args.startdate or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    report_end_date = args.startdate
+    try:
+        window = resolve_report_window(
+            startdate=args.startdate,
+            days=args.days,
+            from_date=args.from_date,
+            to_date=args.to_date,
+        )
+    except ValueError as exc:
+        parser.error(str(exc))
+
+    ledger_date = window.report_end_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    report_end_date = window.report_end_date
+    report_days = window.days
     date_compact = ledger_date.replace("-", "")
+    range_from_date = args.from_date if window.fixed_calendar and args.from_date else None
+    range_to_date = args.to_date if window.fixed_calendar and args.to_date else None
+    dated_range_mode = bool(range_from_date and range_to_date)
+    dated_table_rows: List[Dict[str, Any]] = []
+    reports_dir = ROOT / "reports"
     exclude_forks = not args.include_forks
     exclude_archived = not args.include_archived
     tokens_map = load_tokens_file(args.tokens_file) if args.tokens_file else {}
@@ -463,22 +513,43 @@ def main() -> None:
                     f"  [{login}] WARNING: GITHUB_TOKEN not set — public events limited to 60 req/hr",
                     file=sys.stderr,
                 )
-            end_exclusive = None
-            if args.startdate:
-                cutoff, end_exclusive, since_d, end_d = report_window_bounds(
-                    args.startdate, args.days
-                )
+            if window.fixed_calendar:
                 print(
-                    f"  Events window: {since_d} through {end_d} UTC (inclusive)",
+                    f"  Window: {window.since_day} through {window.end_day} UTC (inclusive)",
                     file=sys.stderr,
                 )
+                print(
+                    "  Repo discovery: Search API (events feed is too shallow for long ranges)",
+                    file=sys.stderr,
+                )
+                final_set, search_hits = collect_repos_from_search(
+                    login,
+                    api_base,
+                    token,
+                    window.since_day,
+                    window.end_day,
+                )
+                if search_hits:
+                    print(
+                        f"  Search: {sum(search_hits.values())} issue/PR hits "
+                        f"({', '.join(f'{k}={v}' for k, v in sorted(search_hits.items()))})",
+                        file=sys.stderr,
+                    )
+                token_source = "search"
             else:
-                cutoff = datetime.now(timezone.utc) - timedelta(days=args.days)
-            events = fetch_events_for_user(
-                login, api_base, token, cutoff, end_exclusive=end_exclusive
-            )
-            final_set, _ = collect_repos_from_events(events)
-            token_source = "public_events"
+                print(
+                    f"  Repo discovery: public events (rolling last {window.days} day(s))",
+                    file=sys.stderr,
+                )
+                events = fetch_events_for_user(
+                    login,
+                    api_base,
+                    token,
+                    window.cutoff,
+                    end_exclusive=window.end_exclusive,
+                )
+                final_set, _ = collect_repos_from_events(events)
+                token_source = "public_events"
         else:
             has_allowlist = args.repos_config and args.repos_config.exists()
             if has_allowlist:
@@ -554,8 +625,9 @@ def main() -> None:
 
         repos_considered: List[Dict[str, str]] = []
         if args.repos_from_events:
+            discovery_src = "search" if token_source == "search" else "public_events"
             for fn in final_list:
-                repos_considered.append({"full_name": fn, "source": "public_events"})
+                repos_considered.append({"full_name": fn, "source": discovery_src})
         else:
             api_set_lower = {x.lower() for x in api_set}
             allow_set_lower = {x.lower() for x in allow_set}
@@ -577,13 +649,21 @@ def main() -> None:
             "username": login,
             "host": host,
             "token_source": token_source,
-            "days": args.days,
+            "days": report_days,
+            "from_date": range_from_date,
+            "to_date": range_to_date,
             "repos_considered": repos_considered,
             "runs": [],
             "summary": {"ok": 0, "error": 0, "skipped": 0},
         }
 
         ledger_path = ledger_dir / f"{login}-{date_compact}.json"
+
+        if dated_range_mode:
+            print(
+                "  Collecting metrics for consolidated dated-report table …",
+                file=sys.stderr,
+            )
 
         for item in final_list:
             parts = item.split("/", 1)
@@ -595,25 +675,77 @@ def main() -> None:
                 write_ledger(ledger_path, ledger)
                 continue
             owner, repo_name = parts[0], parts[1]
-            owner_seg = _sanitize_filename_segment(owner)
-            repo_seg = _sanitize_filename_segment(repo_name)
-            out_name = f"{login}-{owner_seg}-{repo_seg}-{ledger_date}.html"
-            out_html = team_dir / out_name
 
             rem = get_rate_limit_remaining(token, api_base)
             if rem is not None and rem < args.rate_limit_min:
                 print(f"Rate limit low ({rem}); sleeping 60s...")
                 time.sleep(60)
 
+            if dated_range_mode:
+                try:
+                    counts = collect_repo_activity_counts(
+                        owner,
+                        repo_name,
+                        login,
+                        window,
+                        token,
+                        api_url,
+                    )
+                except Exception as exc:
+                    ledger["summary"]["error"] += 1
+                    ledger["runs"].append(
+                        {
+                            "full_name": item,
+                            "status": "error",
+                            "error": str(exc)[:500],
+                        }
+                    )
+                    print(f"  {item} -> error ({exc})", file=sys.stderr)
+                    write_ledger(ledger_path, ledger)
+                    time.sleep(args.sleep_seconds)
+                    continue
+
+                row = {
+                    "username": login,
+                    "repository": item,
+                    **counts,
+                }
+                dated_table_rows.append(row)
+                ledger["summary"]["ok"] += 1
+                ledger["runs"].append(
+                    {
+                        "full_name": item,
+                        "status": "ok",
+                        "metrics": counts,
+                    }
+                )
+                has_activity = any(counts.values())
+                label = "ok" if has_activity else "ok (all zeros)"
+                print(
+                    f"  {item} -> {label} "
+                    f"(merged={counts['prs_merged']} reviews={counts['reviews']} "
+                    f"opened={counts['issues_opened']} closed={counts['issues_closed']})"
+                )
+                write_ledger(ledger_path, ledger)
+                time.sleep(args.sleep_seconds)
+                continue
+
+            owner_seg = _sanitize_filename_segment(owner)
+            repo_seg = _sanitize_filename_segment(repo_name)
+            out_name = f"{login}-{owner_seg}-{repo_seg}-{ledger_date}.html"
+            out_html = team_dir / out_name
+
             code, err, stderr_tail = run_report_subprocess(
                 owner,
                 repo_name,
                 login,
-                args.days,
+                report_days,
                 report_end_date,
                 out_html,
                 token,
                 api_url,
+                from_date=range_from_date,
+                to_date=range_to_date,
             )
             rem_after = get_rate_limit_remaining(token, api_base)
             rel_path = str(out_html.relative_to(ROOT))
@@ -660,7 +792,23 @@ def main() -> None:
 
         print(f"Ledger: {ledger_path}")
 
-    if not args.no_index:
+    if dated_range_mode:
+        out_path = args.dated_report_output
+        if out_path is None:
+            out_path = dated_report_output_path(
+                reports_dir, range_from_date, range_to_date
+            )
+        else:
+            out_path = out_path.resolve()
+        write_dated_report_html(
+            out_path,
+            dated_table_rows,
+            range_from_date,
+            range_to_date,
+        )
+        print(f"\nWrote consolidated report: {out_path.relative_to(ROOT)}")
+        print(f"  Rows: {len(dated_table_rows)}")
+    elif not args.no_index:
         print("\nRunning generate_team_index.py ...")
         subprocess.run([sys.executable, str(ROOT / "generate_team_index.py")], cwd=str(ROOT), check=False)
 

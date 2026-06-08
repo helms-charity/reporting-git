@@ -31,15 +31,23 @@ fi
 #   --startdate YYYY-MM-DD   = END date of the window (last day included), not the first day.
 #   --days N                 = length of the lookback (default 7).
 #
+#   --from-date YYYY-MM-DD --to-date YYYY-MM-DD
+#       Inclusive UTC calendar range (same idea as GitHub profile overview URLs:
+#       https://github.com/USER?tab=overview&from=2026-03-01&to=2026-03-31)
+#       Uses the Search API to discover repos (the public events feed only keeps ~300
+#       recent events and often cannot reach a full month in the past).
+#
 # Example: 7 calendar days ending on 2026-04-10 (inclusive):
 #   ./generate_user_activity_reports.sh --startdate 2026-04-10 --days 7
 #
-# Omit --startdate: events cutoff and per-repo reports both use the current instant in UTC as
-# the window end (github_repo_user_report analyzes with end_date = now UTC).
+# Example: full March 2026 (one consolidated table, not per-repo HTML):
+#   ./generate_user_activity_reports.sh --from-date 2026-03-01 --to-date 2026-03-31 --users helms-charity
+#   → reports/dated-report-2026-03-01-to-2026-03-31.html
+#
+# Omit --startdate/--from-date: events cutoff and per-repo reports use rolling N days from now UTC.
 #
 # With --startdate: that YYYY-MM-DD is the last UTC calendar day of the window (inclusive); the
 # first day is (--startdate minus (--days - 1)), e.g. 7 days ending 2026-05-24 → 2026-05-18..24.
-# Issue/PR Search qualifiers use the same UTC day bounds, so metric cards align with repo discovery.
 #
 # Pass more flags after the script name, e.g. --days 14 --users meejain --startdate 2026-04-10
 python generate_user_activity_reports.py \
