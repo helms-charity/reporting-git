@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarterly report — q2-2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, oklch(from #667eea 0.7 0.15 260) 0%, oklch(from #764ba2 0.6 0.18 300) 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header, .table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px oklch(from #000 1 0 0 / 0.1);
+        }
+        .header h1 { font-size: 2.2em; color: oklch(from #1f2937 0.3 0 0); margin-bottom: 8px; }
+        .header p { color: oklch(from #6b7280 0.5 0 0); margin-bottom: 16px; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+        .stat-card {
+            background: oklch(from #f3f4f6 0.96 0 0);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: oklch(from #667eea 0.6 0.15 260);
+        }
+        .stat-label { font-size: 0.9em; color: oklch(from #6b7280 0.5 0 0); margin-top: 6px; }
+        .week-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+            font-size: 0.9em;
+        }
+        .week-breakdown h3 { font-size: 1em; margin-bottom: 8px; color: oklch(from #374151 0.35 0 0); }
+        .week-breakdown ul { list-style: none; }
+        .week-breakdown li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f3f4f6; }
+        .week-breakdown .val { font-family: monospace; font-weight: 600; }
+        h2 { font-size: 1.5em; color: oklch(from #1f2937 0.3 0 0); margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 2px solid oklch(from #e5e7eb 0.92 0 0);
+            color: oklch(from #374151 0.35 0 0);
+        }
+        td { padding: 12px; border-bottom: 1px solid oklch(from #f3f4f6 0.96 0 0); }
+        tbody tr:hover { background: oklch(from #f9fafb 0.98 0 0); }
+        .metric-cell { text-align: center; font-family: monospace; }
+        .username-cell { font-weight: 600; }
+        .footer { text-align: center; color: white; margin-top: 24px; opacity: 0.9; font-size: 0.9em; }
+        @media (max-width: 768px) { .week-breakdown { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Quarterly report</h1>
+            <p>q2-2026 · 13 weekly index file(s) · Generated 2026-06-02 13:46 UTC</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value">780</div>
+                    <div class="stat-label">Total PRs Merged</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1575</div>
+                    <div class="stat-label">Pages Migrated</div>
+                </div>
+            </div>
+            <div class="week-breakdown">
+                <div>
+                    <h3>Total PRs Merged by week</h3>
+                    <ul><li><span class="week">2026-03-02</span> <span class="val">80</span></li>
+<li><span class="week">2026-03-09</span> <span class="val">70</span></li>
+<li><span class="week">2026-03-16</span> <span class="val">47</span></li>
+<li><span class="week">2026-03-23</span> <span class="val">45</span></li>
+<li><span class="week">2026-03-30</span> <span class="val">85</span></li>
+<li><span class="week">2026-04-06</span> <span class="val">104</span></li>
+<li><span class="week">2026-04-13</span> <span class="val">56</span></li>
+<li><span class="week">2026-04-20</span> <span class="val">108</span></li>
+<li><span class="week">2026-04-27</span> <span class="val">21</span></li>
+<li><span class="week">2026-05-04</span> <span class="val">48</span></li>
+<li><span class="week">2026-05-10</span> <span class="val">30</span></li>
+<li><span class="week">2026-05-18</span> <span class="val">27</span></li>
+<li><span class="week">2026-05-25</span> <span class="val">59</span></li></ul>
+                </div>
+                <div>
+                    <h3>Pages Migrated by week</h3>
+                    <ul><li><span class="week">2026-03-02</span> <span class="val">12</span></li>
+<li><span class="week">2026-03-09</span> <span class="val">88</span></li>
+<li><span class="week">2026-03-16</span> <span class="val">329</span></li>
+<li><span class="week">2026-03-23</span> <span class="val">100</span></li>
+<li><span class="week">2026-03-30</span> <span class="val">10</span></li>
+<li><span class="week">2026-04-06</span> <span class="val">190</span></li>
+<li><span class="week">2026-04-13</span> <span class="val">53</span></li>
+<li><span class="week">2026-04-20</span> <span class="val">147</span></li>
+<li><span class="week">2026-04-27</span> <span class="val">297</span></li>
+<li><span class="week">2026-05-04</span> <span class="val">118</span></li>
+<li><span class="week">2026-05-10</span> <span class="val">191</span></li>
+<li><span class="week">2026-05-18</span> <span class="val">25</span></li>
+<li><span class="week">2026-05-25</span> <span class="val">15</span></li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <h2>Summary by User</h2>
+            <p style="color: oklch(from #6b7280 0.5 0 0); margin-bottom: 16px;">
+                Totals summed from Individual Reports rows across all weekly index pages.
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>PRs Merged</th>
+                        <th>Reviews</th>
+                        <th>Issues Opened</th>
+                        <th>Issues Closed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="username-cell">@amarghioali</td>
+                        <td class="metric-cell">55</td>
+                        <td class="metric-cell">18</td>
+                        <td class="metric-cell">68</td>
+                        <td class="metric-cell">53</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@asthabh23</td>
+                        <td class="metric-cell">23</td>
+                        <td class="metric-cell">3</td>
+                        <td class="metric-cell">12</td>
+                        <td class="metric-cell">15</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@asthabharga_adobe</td>
+                        <td class="metric-cell">1</td>
+                        <td class="metric-cell">1</td>
+                        <td class="metric-cell">7</td>
+                        <td class="metric-cell">3</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@bunting-adbe</td>
+                        <td class="metric-cell">21</td>
+                        <td class="metric-cell">9</td>
+                        <td class="metric-cell">16</td>
+                        <td class="metric-cell">6</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@dave-fink</td>
+                        <td class="metric-cell">3</td>
+                        <td class="metric-cell">2</td>
+                        <td class="metric-cell">4</td>
+                        <td class="metric-cell">3</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@dfink_adobe</td>
+                        <td class="metric-cell">4</td>
+                        <td class="metric-cell">1</td>
+                        <td class="metric-cell">1</td>
+                        <td class="metric-cell">2</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@helms-charity</td>
+                        <td class="metric-cell">81</td>
+                        <td class="metric-cell">22</td>
+                        <td class="metric-cell">69</td>
+                        <td class="metric-cell">74</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@inasplayground</td>
+                        <td class="metric-cell">52</td>
+                        <td class="metric-cell">12</td>
+                        <td class="metric-cell">25</td>
+                        <td class="metric-cell">13</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@iustinp</td>
+                        <td class="metric-cell">50</td>
+                        <td class="metric-cell">5</td>
+                        <td class="metric-cell">37</td>
+                        <td class="metric-cell">26</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@meejain</td>
+                        <td class="metric-cell">68</td>
+                        <td class="metric-cell">0</td>
+                        <td class="metric-cell">0</td>
+                        <td class="metric-cell">0</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@meejain_adobe</td>
+                        <td class="metric-cell">23</td>
+                        <td class="metric-cell">7</td>
+                        <td class="metric-cell">11</td>
+                        <td class="metric-cell">8</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@roperev</td>
+                        <td class="metric-cell">35</td>
+                        <td class="metric-cell">26</td>
+                        <td class="metric-cell">12</td>
+                        <td class="metric-cell">18</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@rusmeenkhan1</td>
+                        <td class="metric-cell">29</td>
+                        <td class="metric-cell">0</td>
+                        <td class="metric-cell">12</td>
+                        <td class="metric-cell">2</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@shivanim123</td>
+                        <td class="metric-cell">88</td>
+                        <td class="metric-cell">0</td>
+                        <td class="metric-cell">2</td>
+                        <td class="metric-cell">0</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@sthirumal</td>
+                        <td class="metric-cell">45</td>
+                        <td class="metric-cell">8</td>
+                        <td class="metric-cell">39</td>
+                        <td class="metric-cell">28</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@techmaven</td>
+                        <td class="metric-cell">34</td>
+                        <td class="metric-cell">13</td>
+                        <td class="metric-cell">0</td>
+                        <td class="metric-cell">1</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@tmorris-adobe</td>
+                        <td class="metric-cell">119</td>
+                        <td class="metric-cell">10</td>
+                        <td class="metric-cell">178</td>
+                        <td class="metric-cell">145</td>
+                    </tr>
+                    <tr>
+                        <td class="username-cell">@zhummerz</td>
+                        <td class="metric-cell">49</td>
+                        <td class="metric-cell">13</td>
+                        <td class="metric-cell">22</td>
+                        <td class="metric-cell">21</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">reporting-git · generate_quarterly_report.py</div>
+    </div>
+</body>
+</html>

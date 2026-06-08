@@ -28,8 +28,8 @@ from typing import Any, Dict, List, Set
 from user_events_repos import (
     INCLUDED_EVENT_TYPES,
     collect_repos_from_events,
-    report_window_bounds,
     fetch_events_for_user,
+    resolve_report_window,
     resolve_token_and_base,
 )
 
@@ -57,6 +57,18 @@ def main() -> None:
         help="End date of window YYYY-MM-DD (default: today UTC). Aligns with report --startdate.",
     )
     parser.add_argument(
+        "--from-date",
+        type=str,
+        metavar="YYYY-MM-DD",
+        help="First UTC calendar day (inclusive). Requires --to-date.",
+    )
+    parser.add_argument(
+        "--to-date",
+        type=str,
+        metavar="YYYY-MM-DD",
+        help="Last UTC calendar day (inclusive). Requires --from-date.",
+    )
+    parser.add_argument(
         "-o",
         "--output",
         type=Path,
@@ -66,16 +78,27 @@ def main() -> None:
     parser.add_argument("-v", "--verbose", action="store_true", help="Per-account stderr details")
     args = parser.parse_args()
 
-    startdate = args.startdate or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    cutoff, end_exclusive, since_d, end_d = report_window_bounds(startdate, args.days)
+    try:
+        window = resolve_report_window(
+            startdate=args.startdate,
+            days=args.days,
+            from_date=args.from_date,
+            to_date=args.to_date,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
     people = load_people(args.user_names)
     all_repos: Set[str] = set()
 
-    print(
-        f"Window: {args.days} UTC calendar day(s) {since_d} through {end_d} (inclusive)",
-        file=sys.stderr,
-    )
+    if window.fixed_calendar:
+        print(
+            f"Window: {window.days} UTC calendar day(s) {window.since_day} through "
+            f"{window.end_day} (inclusive)",
+            file=sys.stderr,
+        )
+    else:
+        print(f"Window: rolling last {window.days} day(s) ending now UTC", file=sys.stderr)
     print(f"Including only event types: {sorted(INCLUDED_EVENT_TYPES)}", file=sys.stderr)
     print("", file=sys.stderr)
 
@@ -104,7 +127,11 @@ def main() -> None:
             if args.verbose:
                 print(f"Fetching events: {login} ({host}) …", file=sys.stderr)
             events = fetch_events_for_user(
-                login, api_base, token, cutoff, end_exclusive=end_exclusive
+                login,
+                api_base,
+                token,
+                window.cutoff,
+                end_exclusive=window.end_exclusive,
             )
             included = [e for e in events if (e.get("type") or "") in INCLUDED_EVENT_TYPES]
             repos, type_counts = collect_repos_from_events(events)

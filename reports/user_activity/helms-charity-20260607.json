@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-08T14:04:18Z",
+  "date": "2026-06-07",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "helms-charity/reporting-git",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "helms-charity/reporting-git",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-reporting-git-2026-06-07.html",
+      "rate_limit_remaining": 4974
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}

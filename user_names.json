@@ -8,8 +8,10 @@
       ]
     },
     {
-      "name": "Bogdan Amarghioali",
-      "accounts": [{ "login": "amarghioali", "host": "github.com" }]
+      "name": "Meet Kumar Jain",
+      "accounts": [
+        { "login": "meejain", "host": "github.com" }
+      ]
     },
     {
       "name": "Charity Helms",
@@ -22,6 +24,10 @@
       "accounts": [
         { "login": "dave-fink", "host": "github.com" }
       ]
+    },
+    {
+      "name": "Bogdan Amarghioali",
+      "accounts": [{ "login": "amarghioali", "host": "github.com" }]
     },
     {
       "name": "Elena Leopold",
@@ -40,18 +46,8 @@
       "accounts": [{ "login": "bunting-adbe", "host": "github.com" }]
     },
     {
-      "name": "Matt Horton",
-      "accounts": [{ "login": "zhummerz", "host": "github.com" }]
-    },
-    {
-      "name": "Meet Kumar Jain",
-      "accounts": [
-        { "login": "meejain", "host": "github.com" }
-      ]
-    },
-    {
-      "name": "Ross Oliver",
-      "accounts": [{ "login": "techmaven", "host": "github.com" }]
+      "name": "Tyler Morris",
+      "accounts": [{ "login": "tmorris-adobe", "host": "github.com" }]
     },
     {
       "name": "Rusmeen Khan",
@@ -60,14 +56,6 @@
     {
       "name": "Shivani M",
       "accounts": [{ "login": "shivanim123", "host": "github.com" }]
-    },
-    {
-      "name": "Swapna Thirumala",
-      "accounts": [{ "login": "sthirumal", "host": "github.com" }]
-    },
-    {
-      "name": "Tyler Morris",
-      "accounts": [{ "login": "tmorris-adobe", "host": "github.com" }]
     }
   ]
 }
