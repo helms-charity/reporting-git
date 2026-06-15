@@ -17,7 +17,7 @@ weekly_report_parse_args "$@"
 REPO_OWNER="hmehta-adobe"
 REPO_NAME="az-poc"
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="51"
+PAGES_MIGRATED="77"
 
 # Array of usernames to generate reports for
 USERS=(

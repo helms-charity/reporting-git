@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-15T12:58:02Z",
+  "date": "2026-06-14",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/summit-trt",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-ise-boilerplate-2026-06-14.html",
+      "rate_limit_remaining": 4963
+    },
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4962,
+      "report_stderr_tail": "No measurable activity for aemdemos/lundbeck-northera @bunting-adbe in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "aemdemos/summit-trt",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-summit-trt-2026-06-14.html",
+      "rate_limit_remaining": 4960
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 1
+  }
+}

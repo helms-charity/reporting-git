@@ -25,7 +25,7 @@ PAGES_MIGRATED="0"
 
 # Array of usernames to generate reports for. No commas.
 USERS=(
-    "meejain_adobe",
+    "meejain_adobe"
     "asthabharga_adobe"
 )
 
