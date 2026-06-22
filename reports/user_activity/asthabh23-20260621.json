@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-22T15:50:31Z",
+  "date": "2026-06-21",
+  "username": "asthabh23",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "adobe/helix-tools-website",
+      "source": "public_events"
+    },
+    {
+      "full_name": "adobe/skills",
+      "source": "public_events"
+    },
+    {
+      "full_name": "asthabh23/excat-v2-ap",
+      "source": "public_events"
+    },
+    {
+      "full_name": "rusmeenkhan1/abbvie",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "adobe/helix-tools-website",
+      "status": "ok",
+      "html_path": "reports/team/asthabh23-adobe-helix-tools-website-2026-06-21.html",
+      "rate_limit_remaining": 4998
+    },
+    {
+      "full_name": "adobe/skills",
+      "status": "ok",
+      "html_path": "reports/team/asthabh23-adobe-skills-2026-06-21.html",
+      "rate_limit_remaining": 4994
+    },
+    {
+      "full_name": "asthabh23/excat-v2-ap",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4994,
+      "report_stderr_tail": "No measurable activity for asthabh23/excat-v2-ap @asthabh23 in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "rusmeenkhan1/abbvie",
+      "status": "ok",
+      "html_path": "reports/team/asthabh23-rusmeenkhan1-abbvie-2026-06-21.html",
+      "rate_limit_remaining": 4993
+    }
+  ],
+  "summary": {
+    "ok": 3,
+    "error": 0,
+    "skipped": 1
+  }
+}

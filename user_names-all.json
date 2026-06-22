@@ -50,6 +50,10 @@
       ]
     },
     {
+      "name": "Swapna Thirumala",
+      "accounts": [{ "login": "sthirumal", "host": "github.com" }]
+    },
+    {
       "name": "Ross Oliver",
       "accounts": [{ "login": "techmaven", "host": "github.com" }]
     },
@@ -60,10 +64,6 @@
     {
       "name": "Shivani M",
       "accounts": [{ "login": "shivanim123", "host": "github.com" }]
-    },
-    {
-      "name": "Swapna Thirumala",
-      "accounts": [{ "login": "sthirumal", "host": "github.com" }]
     },
     {
       "name": "Tyler Morris",

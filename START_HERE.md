@@ -8,10 +8,12 @@ RULES
 **Get your first report in 5 minutes!**
 
 Track GitHub activity within specific repositories: PRs merged, code reviews, issues, commits, and more. Perfect for sprint reports and team dashboards.
+
 - Move last week's files into a new folder with date
+- Make sure the user_names.json is up to date
 - If there are pages migrated, add those to the weekly reports.sh scripts first
 - then run the weekly to see what people worked on in public github.com repos (use this Sun to look back to last Sun)
-./generate_user_activity_reports.sh --startdate 2026-06-14 --days 7
+./generate_user_activity_reports.sh --startdate 2026-06-21 --days 7
 
 - Next run individual weekly reports.sh per known private repos on github.com (such as IDFC).
 ./generate_weekly_reports_poc-az.sh --startdate 2026-06-14 --days 7
@@ -19,15 +21,15 @@ Track GitHub activity within specific repositories: PRs merged, code reviews, is
 
 - delete any individual reports that are all 0's, and delete any that are non-related repos.
 - Go to each person's enterprise git profile to see if they worked on something in the past week
-https://github.com/meejain_adobe?tab=overview&from=2026-06-07&to=2026-06-14
-https://github.com/dfink_adobe?tab=overview&from=2026-05-25&to=2026-05-31
-https://github.com/asthabharga_adobe?tab=overview&from=2026-05-25&to=2026-05-31
-https://github.com/eroper_adobe?tab=overview&from=2026-05-25&to=2026-05-31
+https://github.com/meejain_adobe?tab=overview&from=2026-06-15&to=2026-06-21
+https://github.com/dfink_adobe?tab=overview&from=2026-06-15&to=2026-06-21
+https://github.com/asthabharga_adobe?tab=overview&from=2026-06-15&to=2026-06-21
+https://github.com/eroper_adobe?tab=overview&from=2026-06-15&to=2026-06-21
 
-./generate_weekly_reports_excat.sh --startdate 2026-06-14 --days 7
-./generate_weekly_reports_growth-lab.sh --startdate 2026-05-24 --days 7
+./generate_weekly_reports_excat.sh --startdate 2026-06-21 --days 7
+./generate_weekly_reports_growth-lab.sh --startdate 2026-06-21 --days 7
 ./generate_weekly_reports_ue-extensions.sh --startdate 2026-05-17 --days 7
-./generate_weekly_reports_unsw.sh --startdate 2026-05-17 --days 7
+./generate_weekly_reports_poc-az.sh --startdate 2026-06-21 --days 7
 NOt sure I can get data on this one:
 ./generate_weekly_reports_excat-deploy.sh --startdate 2026-06-14 --days 7
 

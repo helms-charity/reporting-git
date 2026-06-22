@@ -34,12 +34,12 @@
       "accounts": [{ "login": "inasplayground", "host": "github.com" }]
     },
     {
-      "name": "Evan Roper",
-      "accounts": [{ "login": "roperev", "host": "github.com" }]
-    },
-    {
       "name": "Iustin Popescu",
       "accounts": [{ "login": "iustinp", "host": "github.com" }]
+    },
+    {
+      "name": "Evan Roper",
+      "accounts": [{ "login": "roperev", "host": "github.com" }]
     },
     {
       "name": "Josh Bunting",
@@ -48,6 +48,14 @@
     {
       "name": "Tyler Morris",
       "accounts": [{ "login": "tmorris-adobe", "host": "github.com" }]
+    },
+    {
+      "name": "Swapna Thirumala",
+      "accounts": [{ "login": "sthirumal", "host": "github.com" }]
+    },
+    {
+      "name": "Ross Oliver",
+      "accounts": [{ "login": "techmaven", "host": "github.com" }]
     },
     {
       "name": "Rusmeen Khan",
