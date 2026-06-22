@@ -33,6 +33,7 @@ from dated_range_report import (
 )
 from user_events_repos import (
     collect_repos_from_events,
+    collect_repos_from_search,
     fetch_events_for_user,
     resolve_report_window,
 )
@@ -365,8 +366,8 @@ def main() -> None:
     parser.add_argument(
         "--repos-from-events",
         action="store_true",
-        help="Discover repos from public events only (no GET /user/repos, no allowlist). "
-        "Matches list_repos_from_user_events.py (PullRequestEvent and IssuesEvent only).",
+        help="Discover repos from public events (no GET /user/repos, no allowlist). "
+        "With --from-date/--to-date, use search/issues so historical opened issues are included.",
     )
     parser.add_argument(
         "--tokens-file",
@@ -512,25 +513,53 @@ def main() -> None:
                     f"  [{login}] WARNING: GITHUB_TOKEN not set — public events limited to 60 req/hr",
                     file=sys.stderr,
                 )
-            if window.fixed_calendar:
+            if dated_range_mode:
+                print(
+                    f"  Repo discovery: search/issues for {window.since_day} through "
+                    f"{window.end_day} UTC (inclusive)",
+                    file=sys.stderr,
+                )
+                final_set, search_counts = collect_repos_from_search(
+                    login,
+                    api_base,
+                    token,
+                    window.since_day,
+                    window.end_day,
+                )
+                if search_counts:
+                    print(
+                        f"  Search hits: {dict(sorted(search_counts.items()))}",
+                        file=sys.stderr,
+                    )
+                token_source = "search_issues"
+            elif window.fixed_calendar:
                 print(
                     f"  Events window: {window.since_day} through {window.end_day} UTC (inclusive)",
                     file=sys.stderr,
                 )
+                events = fetch_events_for_user(
+                    login,
+                    api_base,
+                    token,
+                    window.cutoff,
+                    end_exclusive=window.end_exclusive,
+                )
+                final_set, _ = collect_repos_from_events(events)
+                token_source = "public_events"
             else:
                 print(
                     f"  Repo discovery: public events (rolling last {window.days} day(s))",
                     file=sys.stderr,
                 )
-            events = fetch_events_for_user(
-                login,
-                api_base,
-                token,
-                window.cutoff,
-                end_exclusive=window.end_exclusive,
-            )
-            final_set, _ = collect_repos_from_events(events)
-            token_source = "public_events"
+                events = fetch_events_for_user(
+                    login,
+                    api_base,
+                    token,
+                    window.cutoff,
+                    end_exclusive=window.end_exclusive,
+                )
+                final_set, _ = collect_repos_from_events(events)
+                token_source = "public_events"
         else:
             has_allowlist = args.repos_config and args.repos_config.exists()
             if has_allowlist:
@@ -606,8 +635,9 @@ def main() -> None:
 
         repos_considered: List[Dict[str, str]] = []
         if args.repos_from_events:
+            source = "search_issues" if token_source == "search_issues" else "public_events"
             for fn in final_list:
-                repos_considered.append({"full_name": fn, "source": "public_events"})
+                repos_considered.append({"full_name": fn, "source": source})
         else:
             api_set_lower = {x.lower() for x in api_set}
             allow_set_lower = {x.lower() for x in allow_set}
