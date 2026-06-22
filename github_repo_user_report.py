@@ -99,6 +99,72 @@ class GitHubRepoUserAnalyzer:
         return all_items
 
     @staticmethod
+    def _isoformat_z(dt: datetime) -> str:
+        """GitHub API timestamp with UTC Z suffix."""
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        else:
+            dt = dt.astimezone(timezone.utc)
+        return dt.isoformat().replace("+00:00", "Z")
+
+    def _list_user_created_issues_paginated(
+        self,
+        since_date: datetime,
+        end_date: datetime,
+        max_pages: int = 100,
+    ) -> Optional[List[Dict]]:
+        """List repo issues created by this user, excluding PR rows from the issues API."""
+        url = f"{self.base_url}/repos/{self.owner}/{self.repo}/issues"
+        since_s, end_s = self._report_day_strings(since_date, end_date)
+        issues: List[Dict] = []
+        seen_numbers = set()
+
+        for page in range(1, max_pages + 1):
+            params = {
+                "state": "all",
+                "creator": self.username,
+                "sort": "created",
+                "direction": "desc",
+                "since": self._isoformat_z(since_date),
+                "per_page": 100,
+                "page": page,
+            }
+            response = requests.get(url, headers=self.headers, params=params)
+            if response.status_code != 200:
+                print(f"Error listing issues: {response.status_code} - {response.text[:500]}")
+                return None
+
+            batch = response.json()
+            if not batch:
+                break
+
+            oldest_created_day = None
+            for issue in batch:
+                created_day = self._merged_at_calendar_day_utc(issue.get("created_at"))
+                if created_day and (
+                    oldest_created_day is None or created_day < oldest_created_day
+                ):
+                    oldest_created_day = created_day
+                if not created_day or not (since_s <= created_day <= end_s):
+                    continue
+                if issue.get("pull_request"):
+                    continue
+                if (issue.get("user") or {}).get("login", "").lower() != self.username.lower():
+                    continue
+                number = issue.get("number")
+                if number in seen_numbers:
+                    continue
+                seen_numbers.add(number)
+                issues.append(issue)
+
+            if len(batch) < 100:
+                break
+            if oldest_created_day and oldest_created_day < since_s:
+                break
+
+        return issues
+
+    @staticmethod
     def _merged_at_calendar_day_utc(merged_at: Optional[str]) -> Optional[str]:
         """YYYY-MM-DD in UTC for merged_at (API returns Zulu)."""
         if not merged_at:
@@ -345,8 +411,14 @@ class GitHubRepoUserAnalyzer:
         return all_reviews
     
     def fetch_user_issues(self, since_date: datetime, end_date: datetime) -> List[Dict]:
-        """Fetch issues (not PRs) opened by the user in the repo within the report window."""
+        """Fetch issues opened by the user, regardless of how they were later closed."""
         print(f"Fetching issues opened by @{self.username} in {self.owner}/{self.repo}...")
+        issues = self._list_user_created_issues_paginated(since_date, end_date)
+        if issues is not None:
+            print(f"Found {len(issues)} issues")
+            return issues
+
+        print("Falling back to search/issues for opened issues...")
         since_s, end_s = self._report_day_strings(since_date, end_date)
         query = (
             f"repo:{self.owner}/{self.repo} is:issue author:{self.username} "
@@ -1447,4 +1519,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-
