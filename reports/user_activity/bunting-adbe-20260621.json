@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-22T15:51:44Z",
+  "date": "2026-06-21",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-libs-2026-06-21.html",
+      "rate_limit_remaining": 4960
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-22T15:50:59Z",
+  "date": "2026-06-21",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "source": "public_events"
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-libs-2026-06-21.html",
+      "rate_limit_remaining": 4984
+    },
+    {
+      "full_name": "aemdemos/poc-vyepti",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4984,
+      "report_stderr_tail": "No measurable activity for aemdemos/poc-vyepti @helms-charity in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-reporting-git-2026-06-21.html",
+      "rate_limit_remaining": 4983
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 1
+  }
+}
