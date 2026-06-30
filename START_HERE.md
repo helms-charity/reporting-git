@@ -21,12 +21,12 @@ Track GitHub activity within specific repositories: PRs merged, code reviews, is
 
 - delete any individual reports that are all 0's, and delete any that are non-related repos.
 - Go to each person's enterprise git profile to see if they worked on something in the past week
-https://github.com/meejain_adobe?tab=overview&from=2026-06-15&to=2026-06-21
+https://github.com/meejain_adobe?tab=overview&from=2026-06-22&to=2026-06-28
 https://github.com/dfink_adobe?tab=overview&from=2026-06-15&to=2026-06-21
 https://github.com/asthabharga_adobe?tab=overview&from=2026-06-15&to=2026-06-21
 https://github.com/eroper_adobe?tab=overview&from=2026-06-15&to=2026-06-21
 
-./generate_weekly_reports_excat.sh --startdate 2026-06-21 --days 7
+./generate_weekly_reports_excat.sh --startdate 2026-06-228 --days 7
 ./generate_weekly_reports_growth-lab.sh --startdate 2026-06-21 --days 7
 ./generate_weekly_reports_ue-extensions.sh --startdate 2026-05-17 --days 7
 ./generate_weekly_reports_poc-az.sh --startdate 2026-06-21 --days 7
