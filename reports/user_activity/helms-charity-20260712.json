@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-13T17:21:51Z",
+  "date": "2026-07-12",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-xenazineusa",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-northera-2026-07-12.html",
+      "rate_limit_remaining": 4996
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-sabril-2026-07-12.html",
+      "rate_limit_remaining": 4984
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-vyepti-2026-07-12.html",
+      "rate_limit_remaining": 4978
+    },
+    {
+      "full_name": "aemdemos/lundbeck-xenazineusa",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-xenazineusa-2026-07-12.html",
+      "rate_limit_remaining": 4966
+    }
+  ],
+  "summary": {
+    "ok": 4,
+    "error": 0,
+    "skipped": 0
+  }
+}

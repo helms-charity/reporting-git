@@ -15,13 +15,15 @@ source "$(dirname "$0")/weekly_report_parse_args.sh"
 weekly_report_parse_args "$@"
 
 REPO_OWNER="aemdemos"
-REPO_NAME="poc-df"
+REPO_NAME="lundbeck-sabril"
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="0"
+PAGES_MIGRATED=$(weekly_report_pages_migrated "$REPO_OWNER" "$REPO_NAME" "$DATE" "$DAYS")
+echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 
 # Array of usernames to generate reports for
 USERS=(
-    "dave-fink"
+    "helms-charity"
+    "rusmeenkhan1"
 )
 
 # Ensure output directory exists

@@ -21,12 +21,12 @@ weekly_report_parse_args "$@"
 REPO_OWNER="Adobe-AEM-Foundation"
 REPO_NAME="growth-lab"
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED="0"
+PAGES_MIGRATED=$(weekly_report_pages_migrated "$REPO_OWNER" "$REPO_NAME" "$DATE" "$DAYS")
+echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 
 # Array of usernames to generate reports for
 USERS=(
     "dfink_adobe"
-    "eroper_adobe"
 )
 
 # Ensure output directory exists
