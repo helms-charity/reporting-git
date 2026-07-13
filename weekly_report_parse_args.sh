@@ -5,6 +5,7 @@
 #   weekly_report_parse_args "$@"
 
 : "${PROGNAME:=weekly_report}"
+WEEKLY_REPORT_LIB_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 weekly_report_usage() {
     echo "Usage: $PROGNAME [--startdate YYYY-MM-DD] [--days N]" >&2
@@ -47,4 +48,25 @@ weekly_report_parse_args() {
         echo "Error: --startdate must be YYYY-MM-DD (got '$DATE')" >&2
         weekly_report_usage
     fi
+}
+
+# Counts pages migrated in the report window by looking for a
+# page-migrations/YYYY-MM-DD/ directory (via the GitHub API) whose date falls
+# in [DATE - DAYS + 1, DATE], and counting CSV data rows inside it.
+# Uses GITHUB_API_URL/GITHUB_ENTERPRISE_TOKEN if set, else GITHUB_TOKEN.
+# Usage: PAGES_MIGRATED=$(weekly_report_pages_migrated "$REPO_OWNER" "$REPO_NAME" "$DATE" "$DAYS")
+weekly_report_pages_migrated() {
+    local owner="$1" repo="$2" startdate="$3" days="$4"
+    local args=(--startdate "$startdate" --days "$days")
+
+    if [ -n "$GITHUB_API_URL" ]; then
+        args+=(--api-url "$GITHUB_API_URL")
+    fi
+    if [ -n "$GITHUB_API_URL" ] && [ -n "$GITHUB_ENTERPRISE_TOKEN" ]; then
+        args+=(--token "$GITHUB_ENTERPRISE_TOKEN")
+    elif [ -n "$GITHUB_TOKEN" ]; then
+        args+=(--token "$GITHUB_TOKEN")
+    fi
+
+    python "$WEEKLY_REPORT_LIB_DIR/get_pages_migrated.py" "$owner" "$repo" "${args[@]}"
 }

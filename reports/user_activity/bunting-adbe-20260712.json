@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-13T17:22:57Z",
+  "date": "2026-07-12",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-medinfo-2026-07-12.html",
+      "rate_limit_remaining": 4957
+    },
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-northera-2026-07-12.html",
+      "rate_limit_remaining": 4957
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 0
+  }
+}

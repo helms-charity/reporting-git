@@ -14,14 +14,16 @@ PROGNAME="${0##*/}"
 source "$(dirname "$0")/weekly_report_parse_args.sh"
 weekly_report_parse_args "$@"
 
-REPO_OWNER="tmorris-adobe"
-REPO_NAME="pmi-poc"
+REPO_OWNER="aemdemos"
+REPO_NAME="lundbeck-xenazineusa"
 OUTPUT_DIR="reports/team"
-PAGES_MIGRATED=""
+PAGES_MIGRATED=$(weekly_report_pages_migrated "$REPO_OWNER" "$REPO_NAME" "$DATE" "$DAYS")
+echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 
 # Array of usernames to generate reports for
 USERS=(
-    "tmorris-adobe"
+    "shivanim123"
+    "helms-charity"
 )
 
 # Ensure output directory exists
