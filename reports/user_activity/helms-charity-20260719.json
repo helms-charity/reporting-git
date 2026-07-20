@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-20T16:04:13Z",
+  "date": "2026-07-19",
+  "username": "helms-charity",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-onfi",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyeptihcp",
+      "source": "public_events"
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/ise-boilerplate",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-ise-boilerplate-2026-07-19.html",
+      "rate_limit_remaining": 4982
+    },
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-libs-2026-07-19.html",
+      "rate_limit_remaining": 4947
+    },
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-medinfo-2026-07-19.html",
+      "rate_limit_remaining": 4936
+    },
+    {
+      "full_name": "aemdemos/lundbeck-onfi",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-onfi-2026-07-19.html",
+      "rate_limit_remaining": 4918
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-sabril-2026-07-19.html",
+      "rate_limit_remaining": 4906
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-vyepti-2026-07-19.html",
+      "rate_limit_remaining": 4893
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyeptihcp",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-aemdemos-lundbeck-vyeptihcp-2026-07-19.html",
+      "rate_limit_remaining": 4882
+    },
+    {
+      "full_name": "helms-charity/reporting-git",
+      "status": "ok",
+      "html_path": "reports/team/helms-charity-helms-charity-reporting-git-2026-07-19.html",
+      "rate_limit_remaining": 4882
+    }
+  ],
+  "summary": {
+    "ok": 8,
+    "error": 0,
+    "skipped": 0
+  }
+}

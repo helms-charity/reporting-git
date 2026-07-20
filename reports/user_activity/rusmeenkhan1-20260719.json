@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-20T16:07:28Z",
+  "date": "2026-07-19",
+  "username": "rusmeenkhan1",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "source": "public_events"
+    },
+    {
+      "full_name": "meejain/ema-petrobras",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-libs",
+      "status": "ok",
+      "html_path": "reports/team/rusmeenkhan1-aemdemos-lundbeck-libs-2026-07-19.html",
+      "rate_limit_remaining": 4855
+    },
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "status": "ok",
+      "html_path": "reports/team/rusmeenkhan1-aemdemos-lundbeck-medinfo-2026-07-19.html",
+      "rate_limit_remaining": 4855
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "status": "ok",
+      "html_path": "reports/team/rusmeenkhan1-aemdemos-lundbeck-sabril-2026-07-19.html",
+      "rate_limit_remaining": 4854
+    },
+    {
+      "full_name": "meejain/ema-petrobras",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4854,
+      "report_stderr_tail": "No measurable activity for meejain/ema-petrobras @rusmeenkhan1 in window; omitting output (--omit-if-empty)."
+    }
+  ],
+  "summary": {
+    "ok": 3,
+    "error": 0,
+    "skipped": 1
+  }
+}

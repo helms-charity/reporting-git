@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-20T16:05:51Z",
+  "date": "2026-07-19",
+  "username": "inasplayground",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "ok",
+      "html_path": "reports/team/inasplayground-aemdemos-lundbeck-northera-2026-07-19.html",
+      "rate_limit_remaining": 4871
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
