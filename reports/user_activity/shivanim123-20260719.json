@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-20T16:07:53Z",
+  "date": "2026-07-19",
+  "username": "shivanim123",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    },
+    {
+      "full_name": "meejain/ema-petrobras",
+      "source": "public_events"
+    },
+    {
+      "full_name": "ShivaniM123/slider-story",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "ok",
+      "html_path": "reports/team/shivanim123-aemdemos-lundbeck-northera-2026-07-19.html",
+      "rate_limit_remaining": 4853
+    },
+    {
+      "full_name": "meejain/ema-petrobras",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4853,
+      "report_stderr_tail": "No measurable activity for meejain/ema-petrobras @shivanim123 in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "ShivaniM123/slider-story",
+      "status": "ok",
+      "html_path": "reports/team/shivanim123-ShivaniM123-slider-story-2026-07-19.html",
+      "rate_limit_remaining": 4853
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 1
+  }
+}
