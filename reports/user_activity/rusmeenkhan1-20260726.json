@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-27T19:34:23Z",
+  "date": "2026-07-26",
+  "username": "rusmeenkhan1",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "ok",
+      "html_path": "reports/team/rusmeenkhan1-aemdemos-lundbeck-northera-2026-07-26.html",
+      "rate_limit_remaining": 4890
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4889,
+      "report_stderr_tail": "No measurable activity for aemdemos/lundbeck-sabril @rusmeenkhan1 in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/rusmeenkhan1-aemdemos-lundbeck-vyepti-2026-07-26.html",
+      "rate_limit_remaining": 4889
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 1
+  }
+}
