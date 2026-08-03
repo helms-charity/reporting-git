@@ -36,10 +36,6 @@
       "accounts": [{ "login": "iustinp", "host": "github.com" }]
     },
     {
-      "name": "Josh Bunting",
-      "accounts": [{ "login": "bunting-adbe", "host": "github.com" }]
-    },
-    {
       "name": "Matt Horton",
       "accounts": [{ "login": "zhummerz", "host": "github.com" }]
     },
