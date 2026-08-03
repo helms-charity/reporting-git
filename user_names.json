@@ -28,12 +28,12 @@
       "accounts": [{ "login": "inasplayground", "host": "github.com" }]
     },
     {
-      "name": "Iustin Popescu",
-      "accounts": [{ "login": "iustinp", "host": "github.com" }]
+      "name": "Evan Roper",
+      "accounts": [{ "login": "roperev", "host": "github.com" }]
     },
     {
-      "name": "Josh Bunting",
-      "accounts": [{ "login": "bunting-adbe", "host": "github.com" }]
+      "name": "Iustin Popescu",
+      "accounts": [{ "login": "iustinp", "host": "github.com" }]
     },
     {
       "name": "Matt Horton",
@@ -60,6 +60,10 @@
     {
       "name": "Shivani M",
       "accounts": [{ "login": "shivanim123", "host": "github.com" }]
+    },
+    {
+      "name": "Tyler Morris",
+      "accounts": [{ "login": "tmorris-adobe", "host": "github.com" }]
     }
   ]
 }
