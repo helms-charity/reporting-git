@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-12T10:16:42Z",
+  "date": "2026-08-09",
+  "username": "amarghioali",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/patients-stryker",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/patients-stryker",
+      "status": "ok",
+      "html_path": "reports/team/amarghioali-aemdemos-patients-stryker-2026-08-09.html",
+      "rate_limit_remaining": 4988
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}

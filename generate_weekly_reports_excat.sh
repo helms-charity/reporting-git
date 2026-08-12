@@ -27,6 +27,7 @@ echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 # Array of usernames to generate reports for. No commas.
 USERS=(
     "meejain_adobe"
+    "asthabharga_adobe"
 )
 
 # Ensure output directory exists
