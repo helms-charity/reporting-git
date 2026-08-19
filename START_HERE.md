@@ -12,7 +12,7 @@ Track GitHub activity within specific repositories: PRs merged, code reviews, is
 - Move last week's files into a new folder with date
 - Make sure the user_names.json is up to date
 - then run the weekly to see what people worked on in public github.com repos (use this Sun to look back to last Sun)
-./generate_user_activity_reports.sh --startdate 2026-08-02 --days 7
+./generate_user_activity_reports.sh --startdate 2026-08-16 --days 7
 - If there are pages migrated, you need to delete those reports and run an individual version, be sure the user list is updated
 
 
@@ -22,13 +22,13 @@ Track GitHub activity within specific repositories: PRs merged, code reviews, is
 
 - delete any individual reports that are all 0's, and delete any that are non-related repos.
 - Go to each person's enterprise git profile to see if they worked on something in the past week
-https://github.com/meejain_adobe?tab=overview&from=2026-07-27&to=2026-08-02
-https://github.com/dfink_adobe?tab=overview&from=2026-07-27&to=2026-08-02
+https://github.com/meejain_adobe?tab=overview&from=2026-08-09&to=2026-08-16
+https://github.com/dfink_adobe?tab=overview&from=2026-08-09&to=2026-08-16
 https://github.com/asthabharga_adobe?tab=overview&from=2026-07-27&to=2026-08-02
 https://github.com/eroper_adobe?tab=overview&from=2026-07-27&to=2026-08-02
 
-./generate_weekly_reports_excat.sh --startdate 2026-08-02 --days 7
-./generate_weekly_reports_growth-lab.sh --startdate 2026-07-12 --days 7
+./generate_weekly_reports_excat.sh --startdate 2026-08-16 --days 7
+./generate_weekly_reports_growth-lab.sh --startdate 2026-08-16 --days 7
 ./generate_weekly_reports_ue-extensions.sh --startdate 2026-05-17 --days 7
 ./generate_weekly_reports_lundbeck-sabril.sh --startdate 2026-07-26 --days 7
 

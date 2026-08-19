@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-19T12:40:04Z",
+  "date": "2026-08-16",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyeptihcp",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-vyepti-2026-08-16.html",
+      "rate_limit_remaining": 4988
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyeptihcp",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-vyeptihcp-2026-08-16.html",
+      "rate_limit_remaining": 4988
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 0
+  }
+}

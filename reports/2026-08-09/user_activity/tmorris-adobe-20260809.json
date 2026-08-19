@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-12T10:18:51Z",
+  "date": "2026-08-09",
+  "username": "tmorris-adobe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "ok",
+      "html_path": "reports/team/tmorris-adobe-aemdemos-lundbeck-northera-2026-08-09.html",
+      "rate_limit_remaining": 4976
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "status": "ok",
+      "html_path": "reports/team/tmorris-adobe-aemdemos-lundbeck-sabril-2026-08-09.html",
+      "rate_limit_remaining": 4976
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyepti",
+      "status": "ok",
+      "html_path": "reports/team/tmorris-adobe-aemdemos-lundbeck-vyepti-2026-08-09.html",
+      "rate_limit_remaining": 4976
+    }
+  ],
+  "summary": {
+    "ok": 3,
+    "error": 0,
+    "skipped": 0
+  }
+}
