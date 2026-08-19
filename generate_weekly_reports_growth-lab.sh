@@ -26,8 +26,7 @@ echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 
 # Array of usernames to generate reports for
 USERS=(
-    "dfink_adobe"
-    "eroper_adobe"
+    "dfink_adobe" 
 )
 
 # Ensure output directory exists
