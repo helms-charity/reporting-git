@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-27T11:16:44Z",
+  "date": "2026-08-23",
+  "username": "meejain",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/foundation-usta",
+      "source": "public_events"
+    },
+    {
+      "full_name": "meejain/ema-eds-guardrail",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/foundation-usta",
+      "status": "ok",
+      "html_path": "reports/team/meejain-aemdemos-foundation-usta-2026-08-23.html",
+      "rate_limit_remaining": 4911
+    },
+    {
+      "full_name": "meejain/ema-eds-guardrail",
+      "status": "ok",
+      "html_path": "reports/team/meejain-meejain-ema-eds-guardrail-2026-08-23.html",
+      "rate_limit_remaining": 4907
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 0
+  }
+}

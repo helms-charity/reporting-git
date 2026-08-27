@@ -13,12 +13,13 @@ Track GitHub activity within specific repositories: PRs merged, code reviews, is
 - Make sure the user_names.json is up to date
 - then run the weekly to see what people worked on in public github.com repos (use this Sun to look back to last Sun)
 ./generate_user_activity_reports.sh --startdate 2026-08-16 --days 7
+./generate_user_activity_reports.sh --startdate YYYY-MM-DD --days 7
 - If there are pages migrated, you need to delete those reports and run an individual version, be sure the user list is updated
 
 
 - Next run individual weekly reports.sh per known private repos on github.com (such as IDFC).
 ./generate_weekly_reports_poc-az.sh --startdate 2026-06-14 --days 7
-./generate_weekly_reports_idfc.sh --startdate 2026-05-24 --days 7
+./generate_weekly_reports_lundbeck-vyeptihcp.sh --startdate 2026-08-23 --days 7
 
 - delete any individual reports that are all 0's, and delete any that are non-related repos.
 - Go to each person's enterprise git profile to see if they worked on something in the past week
