@@ -15,7 +15,7 @@ source "$(dirname "$0")/weekly_report_parse_args.sh"
 weekly_report_parse_args "$@"
 
 REPO_OWNER="aemdemos"
-REPO_NAME="lundbeck-medinfo"
+REPO_NAME="lundbeck-vyeptihcp"
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED=$(weekly_report_pages_migrated "$REPO_OWNER" "$REPO_NAME" "$DATE" "$DAYS")
 echo "📄 Pages migrated in window: $PAGES_MIGRATED"
@@ -24,7 +24,11 @@ echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 USERS=(
     "helms-charity"
     "bunting-adbe"
-    "amarghioali"
+    "roperev"
+    "zhummerz"
+    "sthirumal"
+    "techmaven"
+    "tmorris-adobe"
 )
 
 # Ensure output directory exists
