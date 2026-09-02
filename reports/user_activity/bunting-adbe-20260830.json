@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-02T10:48:55Z",
+  "date": "2026-08-30",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-onfi",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyeptihcp",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4352,
+      "report_stderr_tail": "No measurable activity for aemdemos/lundbeck-medinfo @bunting-adbe in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "aemdemos/lundbeck-onfi",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4350,
+      "report_stderr_tail": "No measurable activity for aemdemos/lundbeck-onfi @bunting-adbe in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "aemdemos/lundbeck-vyeptihcp",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-vyeptihcp-2026-08-30.html",
+      "rate_limit_remaining": 4296
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 2
+  }
+}
