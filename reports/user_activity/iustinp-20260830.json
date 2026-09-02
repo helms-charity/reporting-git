@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-02T10:48:07Z",
+  "date": "2026-08-30",
+  "username": "iustinp",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/patients-stryker",
+      "source": "public_events"
+    },
+    {
+      "full_name": "iustinp/qa-tool",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/patients-stryker",
+      "status": "ok",
+      "html_path": "reports/team/iustinp-aemdemos-patients-stryker-2026-08-30.html",
+      "rate_limit_remaining": 4457
+    },
+    {
+      "full_name": "iustinp/qa-tool",
+      "status": "ok",
+      "html_path": "reports/team/iustinp-iustinp-qa-tool-2026-08-30.html",
+      "rate_limit_remaining": 4435
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 0
+  }
+}
