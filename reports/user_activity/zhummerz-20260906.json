@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-09T11:57:29Z",
+  "date": "2026-09-06",
+  "username": "zhummerz",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/edc-ca",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/edc-ca",
+      "status": "ok",
+      "html_path": "reports/team/zhummerz-aemdemos-edc-ca-2026-09-06.html",
+      "rate_limit_remaining": 4539
+    },
+    {
+      "full_name": "aemdemos/lundbeck-northera",
+      "status": "empty",
+      "reason": "no merged PRs, reviews, or issue activity in window",
+      "rate_limit_remaining": 4536,
+      "report_stderr_tail": "No measurable activity for aemdemos/lundbeck-northera @zhummerz in window; omitting output (--omit-if-empty)."
+    },
+    {
+      "full_name": "aemdemos/lundbeck-sabril",
+      "status": "ok",
+      "html_path": "reports/team/zhummerz-aemdemos-lundbeck-sabril-2026-09-06.html",
+      "rate_limit_remaining": 4533
+    }
+  ],
+  "summary": {
+    "ok": 2,
+    "error": 0,
+    "skipped": 1
+  }
+}

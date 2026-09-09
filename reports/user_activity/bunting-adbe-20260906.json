@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-09T11:57:01Z",
+  "date": "2026-09-06",
+  "username": "bunting-adbe",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/edc-ca",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "source": "public_events"
+    },
+    {
+      "full_name": "aemdemos/lundbeck-onfi",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/edc-ca",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-edc-ca-2026-09-06.html",
+      "rate_limit_remaining": 4588
+    },
+    {
+      "full_name": "aemdemos/lundbeck-medinfo",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-medinfo-2026-09-06.html",
+      "rate_limit_remaining": 4574
+    },
+    {
+      "full_name": "aemdemos/lundbeck-onfi",
+      "status": "ok",
+      "html_path": "reports/team/bunting-adbe-aemdemos-lundbeck-onfi-2026-09-06.html",
+      "rate_limit_remaining": 4570
+    }
+  ],
+  "summary": {
+    "ok": 3,
+    "error": 0,
+    "skipped": 0
+  }
+}
