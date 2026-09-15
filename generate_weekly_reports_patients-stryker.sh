@@ -14,15 +14,19 @@ PROGNAME="${0##*/}"
 source "$(dirname "$0")/weekly_report_parse_args.sh"
 weekly_report_parse_args "$@"
 
-REPO_OWNER="shivanim123"
-REPO_NAME="unsw"
+REPO_OWNER="aemdemos"
+REPO_NAME="patients-stryker"
 OUTPUT_DIR="reports/team"
 PAGES_MIGRATED=$(weekly_report_pages_migrated "$REPO_OWNER" "$REPO_NAME" "$DATE" "$DAYS")
 echo "📄 Pages migrated in window: $PAGES_MIGRATED"
 
 # Array of usernames to generate reports for
 USERS=(
-    "shivanim123"
+    "amarghioali"
+    "asthabh23"
+    "inasplayground"
+    "rusmeenkhan1"
+    "iustinp"
 )
 
 # Ensure output directory exists
@@ -87,6 +91,8 @@ for user in "${USERS[@]}"; do
     sleep 2
 done
 
+echo "✅ All reports completed!"
+
 echo ""
 echo "---"
 echo "📋 Generating team index..."
@@ -94,7 +100,7 @@ python generate_team_index.py
 echo "✓ Team index: reports/index.html"
 
 echo ""
-echo "✅ Done! Wrote ${REPORTS_OK} HTML report(s)."
+echo "✅ Done! Wrote ${REPORTS_OK} HTML report(s) in parallel."
 [ "${REPORTS_SKIPPED:-0}" -gt 0 ] && echo "   Skipped ${REPORTS_SKIPPED} user(s) (no measurable activity in window)."
 echo "View the team index at: file://$(pwd)/reports/index.html"
 
