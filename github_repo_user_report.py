@@ -51,6 +51,14 @@ class GitHubRepoUserAnalyzer:
             }
         }
     
+    def _graphql_url(self) -> str:
+        base = self.base_url.rstrip("/")
+        if base == "https://api.github.com":
+            return "https://api.github.com/graphql"
+        if base.endswith("/v3"):
+            base = base[: -len("/v3")]
+        return f"{base}/graphql"
+
     def _get_pr_size(self, changes: int) -> str:
         """Categorize PR size based on total changes (additions + deletions)"""
         if changes < 10:
@@ -330,24 +338,51 @@ class GitHubRepoUserAnalyzer:
             query, max_pages=10, sort="updated", order="desc"
         )
 
-        # Filter to only issues closed by this user
-        # GitHub doesn't have a direct "closed-by" search filter, so we need to check events
+        # Filter to only issues manually closed by this user (skip auto-closes from a merged PR).
+        # REST issue events don't distinguish the two (commit_id is null either way), so we
+        # use the GraphQL ClosedEvent.closer field: a PullRequest closer means it was auto-closed
+        # by a merge; null means someone closed it manually.
         user_closed_issues = []
+        graphql_query = """
+        query($owner: String!, $repo: String!, $number: Int!) {
+          repository(owner: $owner, name: $repo) {
+            issue(number: $number) {
+              timelineItems(last: 10, itemTypes: [CLOSED_EVENT]) {
+                nodes {
+                  ... on ClosedEvent {
+                    actor { login }
+                    createdAt
+                    closer { __typename }
+                  }
+                }
+              }
+            }
+          }
+        }
+        """
         for issue in all_issues:
             issue_number = issue["number"]
-            events_url = f"{self.base_url}/repos/{self.owner}/{self.repo}/issues/{issue_number}/events"
-            events_response = requests.get(events_url, headers=self.headers)
-            
-            if events_response.status_code == 200:
-                events = events_response.json()
-                # Check if this user closed the issue
-                for event in events:
-                    if event.get("event") == "closed" and event.get("actor", {}).get("login", "").lower() == self.username.lower():
-                        created_at = event.get("created_at")
-                        close_day = self._merged_at_calendar_day_utc(created_at) if created_at else None
-                        if close_day and since_s <= close_day <= end_s:
-                            user_closed_issues.append(issue)
-                            break
+            response = requests.post(
+                self._graphql_url(),
+                headers=self.headers,
+                json={
+                    "query": graphql_query,
+                    "variables": {"owner": self.owner, "repo": self.repo, "number": issue_number},
+                },
+            )
+            if response.status_code != 200:
+                continue
+
+            issue_data = response.json().get("data", {}).get("repository", {}).get("issue") or {}
+            closed_events = issue_data.get("timelineItems", {}).get("nodes", [])
+            for closed_event in closed_events:
+                actor_login = (closed_event.get("actor") or {}).get("login", "")
+                if closed_event.get("closer") is None and actor_login.lower() == self.username.lower():
+                    created_at = closed_event.get("createdAt")
+                    close_day = self._merged_at_calendar_day_utc(created_at) if created_at else None
+                    if close_day and since_s <= close_day <= end_s:
+                        user_closed_issues.append(issue)
+                        break
         
         print(f"Found {len(user_closed_issues)} issues closed by user")
         
