@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-25T09:45:23Z",
+  "date": "2026-09-20",
+  "username": "shivanim123",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "aemdemos/coaching-usta",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "aemdemos/coaching-usta",
+      "status": "ok",
+      "html_path": "reports/team/shivanim123-aemdemos-coaching-usta-2026-09-20.html",
+      "rate_limit_remaining": 4855
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
