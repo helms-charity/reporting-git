@@ -28,6 +28,7 @@ USERS=(
     "zhummerz"
     "sthirumal"
     "techmaven"
+    "tmorris-adobe"
 )
 
 # Ensure output directory exists
