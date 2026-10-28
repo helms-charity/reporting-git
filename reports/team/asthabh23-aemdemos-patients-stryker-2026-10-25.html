@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @asthabh23</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">aemdemos/patients-stryker</div>
+            <div class="username">@asthabh23</div>
+            <div class="meta">
+                📅 Period: October 19, 2026 to October 25, 2026 (7 days) | 
+                🕐 Generated: October 28, 2026 at 08:26:35
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">5</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+2266</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-35</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📄 Pg Migrated (group)</div>
+                <div class="metric-value">0</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Counts merged PRs in the period only. Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">0</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">2</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">2</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">0</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">0</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">1</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">11</div>
+                <div class="size-description">9 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">18</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">2</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">9</div>
+                <div class="size-description">4 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Pull Requests Merged (5)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#424</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/424" class="pr-link" target="_blank">Batch 3: Fix columns-icon-grid, find-a-doctor blocks</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged October 22, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+9</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-3</span>
+                    </div>
+                    <div class="pr-stat">📊 12 total changes</div>
+                    <div class="pr-stat">📄 3 files</div>
+                    <div class="pr-stat">💾 1 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#409</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/409" class="pr-link" target="_blank">Corp: sitewide section spacing (styles-corp.css)</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-s badge-size">S</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged October 21, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+8</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-10</span>
+                    </div>
+                    <div class="pr-stat">📊 18 total changes</div>
+                    <div class="pr-stat">📄 1 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#408</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/408" class="pr-link" target="_blank">AGENTS.md: template style-variation process, block independence, corp rules</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged October 21, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+75</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-1</span>
+                    </div>
+                    <div class="pr-stat">📊 76 total changes</div>
+                    <div class="pr-stat">📄 2 files</div>
+                    <div class="pr-stat">💾 6 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#407</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/407" class="pr-link" target="_blank">Corp: news-detail template scaffold (css/js/themes)</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-m badge-size">M</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged October 21, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+31</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-7</span>
+                    </div>
+                    <div class="pr-stat">📊 38 total changes</div>
+                    <div class="pr-stat">📄 5 files</div>
+                    <div class="pr-stat">💾 2 commits</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#385</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/385" class="pr-link" target="_blank">Corp site base: site: corp switch, corp.js/styles, header-corp & footer-corp</a>
+                    <span class="badge badge-merged">✅ Merged</span>
+                    <span class="badge badge-xxl badge-size">XXL</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Merged October 19, 2026</div>
+                    <div class="pr-stat">
+                        <span class="stat-additions">+2143</span>
+                    </div>
+                    <div class="pr-stat">
+                        <span class="stat-deletions">-14</span>
+                    </div>
+                    <div class="pr-stat">📊 2157 total changes</div>
+                    <div class="pr-stat">📄 17 files</div>
+                    <div class="pr-stat">💾 8 commits</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by asthabh23 (2)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#440</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/440" class="pr-link" target="_blank">[Stryker-com] Set up query index for /us/en</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: October 25, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#358</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/358" class="pr-link" target="_blank">Add redirects for patients stryker</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: October 21, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>👀</span>
+                Pull Requests Reviewed (11 reviews on 9 PRs)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all reviews. You may have reviewed some PRs multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#420</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/420" class="pr-link" target="_blank">Add accordion block with-nested-blocks</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#425</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/425" class="pr-link" target="_blank">[Stryker-com] Columns block variants (corp)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#419</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/419" class="pr-link" target="_blank">[Stryker-com] cards-corp block  variants</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 22, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#419</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/419" class="pr-link" target="_blank">[Stryker-com] cards-corp block  variants</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#428</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/428" class="pr-link" target="_blank">Built a bracket-syntax-to-span transformation system</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#406</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/406" class="pr-link" target="_blank">[Stryker-com] Corp search page: reuse the patients search block, theme and spacers</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 22, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#402</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/402" class="pr-link" target="_blank">[Stryker-com] Social share block (social-share-corp)</a>
+                    <span class="badge badge-commented">DISMISSED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 22, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#415</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/415" class="pr-link" target="_blank">hero banner alignment fix </a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 21, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#385</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/385" class="pr-link" target="_blank">Corp site base: site: corp switch, corp.js/styles, header-corp & footer-corp</a>
+                    <span class="badge badge-commented">COMMENTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 19, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#385</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/385" class="pr-link" target="_blank">Corp site base: site: corp switch, corp.js/styles, header-corp & footer-corp</a>
+                    <span class="badge badge-commented">COMMENTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 19, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#377</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/pull/377" class="pr-link" target="_blank">Superscripts and footnote links match the surrounding text colour</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 19, 2026</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🐛</span>
+                Issues Opened (18)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#448</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/448" class="pr-link" target="_blank">[Stryker-com] News-detail: accordion & tabs pages (9) — read-the-full-article accordion, tabs with cards + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#447</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/447" class="pr-link" target="_blank">[Stryker-com] News-detail: columns, large-headline & panel pages (49) — headline box colours, panel, image CTA tiles, latest news + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#446</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/446" class="pr-link" target="_blank">[Stryker-com] News-detail: Marketo form pages (23) — form ids, contact asides + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#445</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/445" class="pr-link" target="_blank">[Stryker-com] News-detail: remaining video pages (75) — video stories, video next to text, video hero + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#444</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/444" class="pr-link" target="_blank">[Stryker-com] News-detail: hero & banner pages (53) — headline boxes, gold stripe, mid-page banners, link list + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#443</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/443" class="pr-link" target="_blank">[Stryker-com] News-detail: 7 shared fragments (Resources, contact asides, talent banner) + complete list of 123 Experience Fragment pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 5 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#442</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/442" class="pr-link" target="_blank">Migrate 24 news pages with an Experience Fragment: shared BU "Resources" fragments (13) + article content inside a fragment (11)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#440</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/440" class="pr-link" target="_blank">[Stryker-com] Set up query index for /us/en</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#438</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/438" class="pr-link" target="_blank">[Stryker-com] Article cards: build cards-corp teaser cards from query-index</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 24, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#435</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/435" class="pr-link" target="_blank">Migrate 34 BU news articles with related-articles cards (no Experience Fragment)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#434</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/434" class="pr-link" target="_blank">Standardise news template layout based on page shared by Stryker</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#433</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/433" class="pr-link" target="_blank">news-detail template(default) : Pages with no experience fragment (587)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#431</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/431" class="pr-link" target="_blank">news-detail template (default): Pages with XF (123)</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#430</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/430" class="pr-link" target="_blank">Back button: show only after internal navigation and return to the previous page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#423</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/423" class="pr-link" target="_blank">[UAT] Batch3: fix feedbacks on zip skip closure page</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 22, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#395</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/395" class="pr-link" target="_blank">[Stryker-com] News-detail group 2 (video + side-by-side content, 42 pages): section layout + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 19, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#394</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/394" class="pr-link" target="_blank">[Stryker-com] News-detail group 1 (cards only, 50 pages): fix curated-teasers + import</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 19, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#393</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/393" class="pr-link" target="_blank">[Stryker-com] News-detail: import 409 default-content pages as is (no blocks)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 19, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💬</span>
+                Issue Comments (9 comments on 4 issues)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all comments. You may have commented on some issues multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#431</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/431" class="pr-link" target="_blank">news-detail template (default): Pages with XF (123)</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Page layout for reference: https://www.stryker.com/us/en/about/news/2022/features/this-surgical-icu-...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#443</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/443" class="pr-link" target="_blank">[Stryker-com] News-detail: 7 shared fragments (Resources, contact asides, talent banner) + complete list of 123 Experience Fragment pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    ## Experience Fragment mapping (from the customer export)
+
+Built from the customer's "Experience Fra...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#443</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/443" class="pr-link" target="_blank">[Stryker-com] News-detail: 7 shared fragments (Resources, contact asides, talent banner) + complete list of 123 Experience Fragment pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    ## Page → fragment table (part 1 of 2): news-detail pages
+
+| # | Page | Import issue | Fragment (ope...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#443</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/443" class="pr-link" target="_blank">[Stryker-com] News-detail: 7 shared fragments (Resources, contact asides, talent banner) + complete list of 123 Experience Fragment pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    ## Page → fragment table (part 2 of 2): news-detail pages
+
+| # | Page | Import issue | Fragment (ope...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#443</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/443" class="pr-link" target="_blank">[Stryker-com] News-detail: 7 shared fragments (Resources, contact asides, talent banner) + complete list of 123 Experience Fragment pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    ## Export rows for pages not on the 710 list (68)
+Not news-detail (other templates, test pages, Japa...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#443</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/443" class="pr-link" target="_blank">[Stryker-com] News-detail: 7 shared fragments (Resources, contact asides, talent banner) + complete list of 123 Experience Fragment pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    **PR #450 builds the 7 shared fragments** and closes this issue when merged.
+
+**Done** (ticked above...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#433</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/433" class="pr-link" target="_blank">news-detail template(default) : Pages with no experience fragment (587)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 23, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Page layout for reference: https://www.stryker.com/us/en/about/news/2022/features/this-surgical-icu-...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#433</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/433" class="pr-link" target="_blank">news-detail template(default) : Pages with no experience fragment (587)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 25, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    ## Pages with no Experience Fragment (continued, 468–587)
+
+468. https://www.stryker.com/us/en/emerge...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#358</span>
+                    <a href="https://github.com/aemdemos/patients-stryker/issues/358" class="pr-link" target="_blank">Add redirects for patients stryker</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 October 21, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    All added. closing the ticket
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
