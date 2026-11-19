@@ -1,5 +1,10 @@
 #!/bin/zsh
 
+## if a week is missed, run manually after archiving the previous reports with this:
+## ./generate_user_activity_reports.sh --startdate 2026-11-08 --days 7 &&
+## ./generate_weekly_reports_excat.sh --startdate 2026-11-08 --days 7 &&
+## ./generate_weekly_reports_growth-lab.sh --startdate 2026-11-08 --days 7
+
 set -e
 
 REPO_DIR="/Users/chelms/IdeaProjects/reporting-git"
