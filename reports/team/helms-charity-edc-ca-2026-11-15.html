@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Activity Report - @helms-charity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: oklch(from #24292f l c h);
+            background: linear-gradient(135deg, oklch(from #f6f8fa l c h) 0%, oklch(from #ffffff l c h) 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px oklch(from #000000 l c h / 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h) 0%, oklch(from #0969da l c h) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .repo {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            opacity: 0.95;
+            font-family: 'Monaco', monospace;
+        }
+        
+        .header .username {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .header .meta {
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 40px;
+            background: oklch(from #f8f9fa l c h);
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(135deg, oklch(from #0366d6 l c h), oklch(from #0969da l c h));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .metric-label {
+            color: oklch(from #6c757d l c h);
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .section {
+            padding: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: oklch(from #1f2937 l c h);
+            border-bottom: 3px solid oklch(from #0366d6 l c h);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-card {
+            background: white;
+            border: 1px solid oklch(from #e9ecef l c h);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pr-card:hover {
+            box-shadow: 0 4px 12px oklch(from #000000 l c h / 0.1);
+            border-color: oklch(from #0366d6 l c h);
+        }
+        
+        .pr-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: oklch(from #1f2937 l c h);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pr-number {
+            color: oklch(from #0366d6 l c h);
+            font-weight: 700;
+        }
+        
+        .pr-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid oklch(from #e9ecef l c h);
+            flex-wrap: wrap;
+        }
+        
+        .pr-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+        }
+        
+        .stat-additions {
+            color: oklch(from #22c55e l c h);
+            font-weight: 600;
+        }
+        
+        .stat-deletions {
+            color: oklch(from #ef4444 l c h);
+            font-weight: 600;
+        }
+        
+        .pr-link {
+            color: oklch(from #0366d6 l c h);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .pr-link:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-merged {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-open {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-closed {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-approved {
+            background: oklch(from #22c55e l c h / 0.1);
+            color: oklch(from #16a34a l c h);
+        }
+        
+        .badge-changes-requested {
+            background: oklch(from #ef4444 l c h / 0.1);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-commented {
+            background: oklch(from #3b82f6 l c h / 0.1);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-size {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            margin-left: 8px;
+        }
+        
+        .badge-xs {
+            background: oklch(from #10b981 l c h / 0.15);
+            color: oklch(from #059669 l c h);
+        }
+        
+        .badge-s {
+            background: oklch(from #3b82f6 l c h / 0.15);
+            color: oklch(from #2563eb l c h);
+        }
+        
+        .badge-m {
+            background: oklch(from #f59e0b l c h / 0.15);
+            color: oklch(from #d97706 l c h);
+        }
+        
+        .badge-l {
+            background: oklch(from #f97316 l c h / 0.15);
+            color: oklch(from #ea580c l c h);
+        }
+        
+        .badge-xl {
+            background: oklch(from #ef4444 l c h / 0.15);
+            color: oklch(from #dc2626 l c h);
+        }
+        
+        .badge-xxl {
+            background: oklch(from #991b1b l c h / 0.2);
+            color: oklch(from #7f1d1d l c h);
+            font-weight: 700;
+        }
+        
+        .pr-size-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .size-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid oklch(from #e9ecef l c h);
+        }
+        
+        .size-label {
+            font-size: 0.85em;
+            color: oklch(from #6c757d l c h);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .size-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+        
+        .size-description {
+            font-size: 0.75em;
+            color: oklch(from #6c757d l c h);
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Repository Activity Report</h1>
+            <div class="repo">aemdemos/edc-ca</div>
+            <div class="username">@helms-charity</div>
+            <div class="meta">
+                📅 Period: November 09, 2026 to November 15, 2026 (7 days) | 
+                🕐 Generated: November 19, 2026 at 07:43:57
+            </div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card" style="background: yellow">
+                <div class="metric-label">✅ PRs Merged</div>
+                <div class="metric-value">0</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📈 Lines Added</div>
+                <div class="metric-value">+0</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📉 Lines Deleted</div>
+                <div class="metric-value">-0</div>
+            </div>
+            <div class="metric-card" style="background: transparent">
+                <div class="metric-label">📄 Pg Migrated (group)</div>
+                <div class="metric-value">0</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">
+                <span>📏</span>
+                Pull Request Size Distribution
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Counts merged PRs in the period only. Based on total changes (additions + deletions). Size categories match OSSInsight standards.</em>
+            </p>
+            <div class="pr-size-chart">
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xs badge-size">XS</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #10b981 l c h);">0</div>
+                    <div class="size-description">&lt; 10 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-s badge-size">S</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #3b82f6 l c h);">0</div>
+                    <div class="size-description">10-29 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-m badge-size">M</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f59e0b l c h);">0</div>
+                    <div class="size-description">30-99 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-l badge-size">L</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #f97316 l c h);">0</div>
+                    <div class="size-description">100-499 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xl badge-size">XL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #ef4444 l c h);">0</div>
+                    <div class="size-description">500-999 changes</div>
+                </div>
+                <div class="size-card">
+                    <div class="size-label">
+                        <span class="badge badge-xxl badge-size">XXL</span>
+                    </div>
+                    <div class="size-value" style="color: oklch(from #991b1b l c h);">0</div>
+                    <div class="size-description">≥ 1000 changes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🤝</span>
+                Other repository collaboration
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Authoring, QA-related work, documentation and general collab can be represented here.</em>
+            </p>
+                <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">👀 Reviews Given</div>
+                <div class="metric-value">39</div>
+                <div class="size-description">33 unique PRs</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">🐛 Issues Opened</div>
+                <div class="metric-value">70</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">✅ Issues Closed</div>
+                <div class="metric-value">8</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">💬 Issue Comments</div>
+                <div class="metric-value">13</div>
+                <div class="size-description">10 unique issues</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>✅</span>
+                Issues Closed by helms-charity (8)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#883</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/883" class="pr-link" target="_blank">importer: ebook pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 09, 2026</div>
+                    <div class="pr-stat">💬 4 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#830</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/830" class="pr-link" target="_blank">importer: event-detail-template</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 09, 2026</div>
+                    <div class="pr-stat">💬 4 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#799</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/799" class="pr-link" target="_blank">importer: podcast pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 09, 2026</div>
+                    <div class="pr-stat">💬 5 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#999</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/999" class="pr-link" target="_blank">2.5 get-info-cta should stack on tablet</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 13, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#835</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/835" class="pr-link" target="_blank">Importer: Formal French Language `native` support</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 12, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#943</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/943" class="pr-link" target="_blank">FI articles not displaying correct primary tag</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#913</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/913" class="pr-link" target="_blank">authoring: fragment pages need metadata</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 09, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#887</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/887" class="pr-link" target="_blank">authoring: create success-stories and case-studies landing pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">🔒 Closed: November 09, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>👀</span>
+                Pull Requests Reviewed (39 reviews on 33 PRs)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all reviews. You may have reviewed some PRs multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1024</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1024" class="pr-link" target="_blank">export-journey: timeline stays under the top nav, and clicking a period returns to its top (#1017)</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1024</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1024" class="pr-link" target="_blank">export-journey: timeline stays under the top nav, and clicking a period returns to its top (#1017)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1035</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1035" class="pr-link" target="_blank">feat(overviewtext): add left alignment option and corresponding styles</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1033</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1033" class="pr-link" target="_blank">Create onetrust privacy button placeholder block</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1032</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1032" class="pr-link" target="_blank">feat(search-bar): implement standalone search bar component with styl…</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1007</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1007" class="pr-link" target="_blank">style: update grid and image-body-text padding for improved layout co…</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1007</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1007" class="pr-link" target="_blank">style: update grid and image-body-text padding for improved layout co…</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1028</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1028" class="pr-link" target="_blank">styles: light-charcoal, wide bands run edge to edge; no gap under the L2 header (#1025)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1019</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1019" class="pr-link" target="_blank">campaign-page: green theme and the campaign footer by default (#1012)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1018</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1018" class="pr-link" target="_blank">Update media query breakpoints for Get Info CTA layout and add docume…</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1005</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1005" class="pr-link" target="_blank">Cards (financial-product): promo-card option (#1001)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1008</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1008" class="pr-link" target="_blank">Table (striped): match edc.ca's table size, outline, scrollbar and column hints (#998)</a>
+                    <span class="badge badge-commented">COMMENTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1004</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1004" class="pr-link" target="_blank">Extend applynowbanner light-charcoal wide to edge</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1002</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/1002" class="pr-link" target="_blank">Cards: links to other sites are no longer treated as page paths (#1000)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#991</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/991" class="pr-link" target="_blank">fix(links): new-tab target and icon for edc.ca subdomain links and card text links (#980)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#989</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/989" class="pr-link" target="_blank">image-body-text: unsized blocks get edc.ca's 48px top/bottom margin (#988)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#986</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/986" class="pr-link" target="_blank">breadcrumbs: banker-page trails from one shared fragment per language (#957)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#987</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/987" class="pr-link" target="_blank">herobanner: bc-event sections style the hero as edc.ca's Business Connections banner (#965)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#978</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/978" class="pr-link" target="_blank">feat(cards): banker-product variant, as edc.ca's banker product cards (#953)</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#978</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/978" class="pr-link" target="_blank">feat(cards): banker-product variant, as edc.ca's banker product cards (#953)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#977</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/977" class="pr-link" target="_blank">feat: add Slim Banner component with styling and authoring guide</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#977</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/977" class="pr-link" target="_blank">feat: add Slim Banner component with styling and authoring guide</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#979</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/979" class="pr-link" target="_blank">feat(recommended-content): featured and no-date variants (#958)</a>
+                    <span class="badge badge-changes-requested">CHANGES_REQUESTED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#979</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/979" class="pr-link" target="_blank">feat(recommended-content): featured and no-date variants (#958)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#976</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/976" class="pr-link" target="_blank">feat(cards): product variant, as edc.ca's product cards (#938)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#956</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/956" class="pr-link" target="_blank">Special section margin case (#923)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#962</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/962" class="pr-link" target="_blank">Phone section style: edc.ca phone number footer (#925)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#963</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/963" class="pr-link" target="_blank">Integrated report: status icons and spacing match edc.ca (#961)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#940</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/940" class="pr-link" target="_blank">feat(columns): tiles variant, as edc.ca's Two Column Tiles (#914)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#950</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/950" class="pr-link" target="_blank">feat: add Insights Article Search component</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#942</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/942" class="pr-link" target="_blank">feat: add Newsroom Filter component with year picker and dated headlines</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#915</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/915" class="pr-link" target="_blank">value-prop-hero block and campaign-page header (#908)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#934</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/934" class="pr-link" target="_blank">Left-hand navigation: accordion tables fit at 1200px+ again, as on edc.ca (#928)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#939</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/939" class="pr-link" target="_blank">Cardgrid: a CTA linked to just "#" loads max-## more cards per click (#927)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#936</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/936" class="pr-link" target="_blank">fix(breadcrumbs): FI insights articles use the source's section trail (#929)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#936</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/936" class="pr-link" target="_blank">fix(breadcrumbs): FI insights articles use the source's section trail (#929)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#935</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/935" class="pr-link" target="_blank">fix(left-hand-navigation): auto-load the menu on French credit-insurance pages (#931)</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#919</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/919" class="pr-link" target="_blank">feat(myedc-login): add initial implementation of MyEDC login block wi…</a>
+                    <span class="badge badge-approved">APPROVED</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#166</span>
+                    <a href="https://github.com/aemdemos/edc-ca/pull/166" class="pr-link" target="_blank">Add author-profile-page template and style author-profile recommended-content (#153)</a>
+                    <span class="badge badge-commented">PENDING</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 Unknown</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>🐛</span>
+                Issues Opened (70)
+            </h2>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1063</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1063" class="pr-link" target="_blank">image-body-text(image-right) should align the image to the right</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1062</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1062" class="pr-link" target="_blank">Stickynav "product-name" title and active section style</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1061</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1061" class="pr-link" target="_blank">sub-bullets should be solid dots</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1060</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1060" class="pr-link" target="_blank">campaign-page nav style</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1059</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1059" class="pr-link" target="_blank">importing: misc content and campaign problems</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1058</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1058" class="pr-link" target="_blank">columns(tiles) styling</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1057</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1057" class="pr-link" target="_blank">importing: export trends card labels</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1056</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1056" class="pr-link" target="_blank">get-info-cta (image-right) variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1055</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1055" class="pr-link" target="_blank">block: media-content</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1054</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1054" class="pr-link" target="_blank">pullquote(testimonial) padding</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1053</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1053" class="pr-link" target="_blank">applynowbanner - margin above button</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1052</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1052" class="pr-link" target="_blank">importer: section-title with anchor ID problem</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1051</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1051" class="pr-link" target="_blank">importer: missing card links</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1050</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1050" class="pr-link" target="_blank">OL text style when centered</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1049</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1049" class="pr-link" target="_blank">onpagenavigation standardization refactor</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1048</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1048" class="pr-link" target="_blank">importer: wrong template, missing button, centering</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 15, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1047</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1047" class="pr-link" target="_blank">export-journey: last tabs missing content</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1046</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1046" class="pr-link" target="_blank">importing: scimodalinterstitial block missing</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1045</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1045" class="pr-link" target="_blank">Importing: recommend-article list paths</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1044</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1044" class="pr-link" target="_blank">article dates in cards</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1043</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1043" class="pr-link" target="_blank">article-v2 tagcloud section width 992px</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1042</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1042" class="pr-link" target="_blank">export-journey h2 bug</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1041</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1041" class="pr-link" target="_blank">recommended-content(three-up) variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1040</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1040" class="pr-link" target="_blank">series(ebook) not showing description</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1039</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1039" class="pr-link" target="_blank">importing: #nested sections not working as expected</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1038</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1038" class="pr-link" target="_blank">overviewtext(left) variant styling</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1037</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1037" class="pr-link" target="_blank">import: map to overviewtext(left) variant</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1036</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1036" class="pr-link" target="_blank">EDC QA: cards(three-up) button alignment</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 14, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1030</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1030" class="pr-link" target="_blank">QA the bc-event-detail pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1026</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1026" class="pr-link" target="_blank">overviewtext(left) variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1023</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1023" class="pr-link" target="_blank">table font color/size standardization</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1022</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1022" class="pr-link" target="_blank">recommended-content(tags-any) should ignore tags</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1021</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1021" class="pr-link" target="_blank">QA of article search results</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1020</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1020" class="pr-link" target="_blank">Block: Search-bar (or search variant?) + author search pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1013</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1013" class="pr-link" target="_blank">onetrust-privacy-button placeholder block</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1012</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1012" class="pr-link" target="_blank">create campaign-page template + green theme</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1011</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1011" class="pr-link" target="_blank">importer: campaign template pages</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 7 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1010</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1010" class="pr-link" target="_blank">section.collapsible for show/hide content</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1009</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1009" class="pr-link" target="_blank">partnership-card-filter(sentence-builder) variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1006</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1006" class="pr-link" target="_blank">2.9 export-journey tabs items layout</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 4 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1001</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1001" class="pr-link" target="_blank">3.3 Promo-card option for cards (financial-product).</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1000</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1000" class="pr-link" target="_blank">3.1 Cards whose only link is external disappear</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#999</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/999" class="pr-link" target="_blank">2.5 get-info-cta should stack on tablet</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#998</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/998" class="pr-link" target="_blank">2.1 table (striped) is too large.</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#997</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/997" class="pr-link" target="_blank">1.2 light-charcoal, wide section</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#996</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/996" class="pr-link" target="_blank">Phone side padding in grid sections</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#984</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/984" class="pr-link" target="_blank">import: banker-page</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                    <div class="pr-stat">💬 5 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#983</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/983" class="pr-link" target="_blank">breadcrumbs: event-detail</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#982</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/982" class="pr-link" target="_blank">overviewtext style for event-detail-page pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#981</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/981" class="pr-link" target="_blank">import: bc-event-detail pages as event-detail-page pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#980</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/980" class="pr-link" target="_blank">Allow external link icon on text buttons</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#965</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/965" class="pr-link" target="_blank">herobanner: style for .section.bc-event</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#961</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/961" class="pr-link" target="_blank">EDC QA: status icons and spacing in the milestone/status section mismatch</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#957</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/957" class="pr-link" target="_blank">breadcrumbs: banker-page template</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#955</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/955" class="pr-link" target="_blank">template: bc-event-detail</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#954</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/954" class="pr-link" target="_blank">template: Banker-page</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#953</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/953" class="pr-link" target="_blank">cards (banker-product) variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#952</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/952" class="pr-link" target="_blank">Template: campaign page</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                    <div class="pr-stat">💬 3 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#947</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/947" class="pr-link" target="_blank">Rename primary tag value in metadata for FI articles</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 2 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#943</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/943" class="pr-link" target="_blank">FI articles not displaying correct primary tag</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#941</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/941" class="pr-link" target="_blank">block: insights-article-search</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#938</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/938" class="pr-link" target="_blank">cards (product) variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#937</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/937" class="pr-link" target="_blank">Special section.testimonials style for pullquote</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#933</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/933" class="pr-link" target="_blank">Robots.txt usage with indexing + sitemap</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#932</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/932" class="pr-link" target="_blank">block: slim-banner + variant</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#931</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/931" class="pr-link" target="_blank">EDC QA: Missing left-hand navigation on the FR pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#930</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/930" class="pr-link" target="_blank">Manual import cases</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 4 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#929</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/929" class="pr-link" target="_blank">EDC QA:  Financial Institutions article - Incorrect breadcrumbs and date with duplicate recommended articles</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#928</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/928" class="pr-link" target="_blank">EDC QA: Policy Documents - Coverage certificate table is too narrow and displays horizontal scrollbar</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 1 comments</div>
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#927</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/927" class="pr-link" target="_blank">EDC QA: Success Stories landing page - load more button functionality missing</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                    <div class="pr-stat">💬 0 comments</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <span>💬</span>
+                Issue Comments (13 comments on 10 issues)
+            </h2>
+            <p style="color: #6c757d; margin-bottom: 20px; font-size: 0.95em;">
+                <em>Showing all comments. You may have commented on some issues multiple times.</em>
+            </p>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#930</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/930" class="pr-link" target="_blank">Manual import cases</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    https://main--edc-ca--aemdemos.aem.live/en/financial-institutions/insights/blog/fi-edc-build-indigen...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#930</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/930" class="pr-link" target="_blank">Manual import cases</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Tag pages with sticky nav/cards: 
+https://www.edc.ca/en/financial-institutions/insights.html | https...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#907</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/907" class="pr-link" target="_blank">importer: content-page template pages</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    @roperev  here are a couple more pages that were not "content-page" templates, but are just general ...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#975</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/975" class="pr-link" target="_blank">QA: Content pages – Pages with special components (7 of 7)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    @roperev Importer fixes:
+1. the "get-info-cta", if it has a border, needs to be imported with classn...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#970</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/970" class="pr-link" target="_blank">QA: Content pages – Value Proposition banner text pages (2 of 7)</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 11, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    From his "fixed in DA" list:
+- ~~He added a section break, need that to be imported~~ ✅ **Resolved i...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1023</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1023" class="pr-link" target="_blank">table font color/size standardization</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Here are a bunch of pages that should have tables on them somewhere.
+
+<html xmlns:v="urn:schemas-mic...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#920</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/920" class="pr-link" target="_blank">Content page importer (#907): component mapping, block variants, new blocks and layout clusters (master)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    New tickets:
+https://github.com/aemdemos/edc-ca/issues/937 for .section.testimonials.pullquote block...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#920</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/920" class="pr-link" target="_blank">Content page importer (#907): component mapping, block variants, new blocks and layout clusters (master)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Case studies was missed;
+
+<img width="866" height="1000" alt="Image" src="https://github.com/user-at...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#920</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/920" class="pr-link" target="_blank">Content page importer (#907): component mapping, block variants, new blocks and layout clusters (master)</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 10, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Per https://github.com/aemdemos/edc-ca/issues/959 , I think we need to import a nav and footer path ...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#1006</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/1006" class="pr-link" target="_blank">2.9 export-journey tabs items layout</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 13, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    @roperev see how this imports again https://main--edc-ca--aemdemos.aem.page/en/export-knowledge/get-...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#933</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/933" class="pr-link" target="_blank">Robots.txt usage with indexing + sitemap</a>
+                    <span class="badge badge-open">🔓 Open</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Tyler made a Wiki page with all the guidance
+https://wiki.corp.adobe.com/spaces/MSTeam/pages/4119759...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#994</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/994" class="pr-link" target="_blank">QA (design): content pages – CSS, block and site-code issues from QA round 1 (#969–#975)</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 12, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    @roperev here's another pattern of spacing, not sure if this is one we can do since there's no block...
+                </div>
+            </div>
+
+            <div class="pr-card">
+                <div class="pr-title">
+                    <span class="pr-number">#887</span>
+                    <a href="https://github.com/aemdemos/edc-ca/issues/887" class="pr-link" target="_blank">authoring: create success-stories and case-studies landing pages</a>
+                    <span class="badge badge-closed">✅ Closed</span>
+                </div>
+                <div class="pr-stats">
+                    <div class="pr-stat">📅 November 09, 2026</div>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: oklch(from #f8f9fa l c h); border-radius: 4px; font-size: 0.9em; color: oklch(from #495057 l c h);">
+                    Looks like this was done, closing ticket.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
