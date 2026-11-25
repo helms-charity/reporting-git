@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-25T11:59:23Z",
+  "date": "2026-11-22",
+  "username": "iustinp",
+  "host": "github.com",
+  "token_source": "public_events",
+  "days": 7,
+  "from_date": null,
+  "to_date": null,
+  "repos_considered": [
+    {
+      "full_name": "iustinp/css-blast-radius",
+      "source": "public_events"
+    }
+  ],
+  "runs": [
+    {
+      "full_name": "iustinp/css-blast-radius",
+      "status": "ok",
+      "html_path": "reports/team/iustinp-iustinp-css-blast-radius-2026-11-22.html",
+      "rate_limit_remaining": 4635
+    }
+  ],
+  "summary": {
+    "ok": 1,
+    "error": 0,
+    "skipped": 0
+  }
+}
